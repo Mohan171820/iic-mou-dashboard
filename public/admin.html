@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - MoU Management System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="logo-icon">M</div>
+      <div>
+        <div class="header-title">MoU Management System</div>
+        <div class="header-subtitle">Industry Connect & COE Management</div>
+      </div>
+    </div>
+
+    <div style="flex:1; max-width:400px; margin:0 30px;">
+      <input type="text" id="globalSearchInput" placeholder="🔍 Search MoUs, industries, departments..." class="form-input" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;" />
+    </div>
+
+    <div class="header-actions">
+      <button class="header-btn" onclick="toggleTheme()">🌓 Theme</button>
+      <div class="user-badge">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div style="font-size:13px; font-weight:700;" id="userNameBadge">Administrator</div>
+          <div style="font-size:10px; color:#94a3b8;" id="userRoleBadge">Admin</div>
+        </div>
+      </div>
+      <button class="header-btn" onclick="logoutUser()" style="background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.4);">Logout</button>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="app-body">
+    <!-- Sidebar -->
+    <nav class="app-sidebar">
+      <div class="nav-section">
+        <div class="nav-section-title">Core Dashboards</div>
+        <a href="#" class="nav-item active" data-section="dashboard">
+          <span>📊 Executive Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-section="departments">
+          <span>🏛️ Department Progress</span>
+        </a>
+        <a href="#" class="nav-item" data-section="mou-tracker">
+          <span>📋 MoU Tracker</span>
+        </a>
+        <a href="#" class="nav-item" data-section="signed-register">
+          <span>📜 Signed Register</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Industry & COE</div>
+        <a href="#" class="nav-item" data-section="industries">
+          <span>🏢 Industry Partners</span>
+        </a>
+        <a href="#" class="nav-item" data-section="commitments">
+          <span>🎯 MoU Commitments</span>
+        </a>
+        <a href="#" class="nav-item" data-section="meetings">
+          <span>🤝 Visits & Meetings</span>
+        </a>
+        <a href="#" class="nav-item" data-section="coe">
+          <span>⚡ COE Monetisation</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">System & Audit</div>
+        <a href="#" class="nav-item" data-section="reports">
+          <span>📈 Reports & Export</span>
+        </a>
+        <a href="#" class="nav-item" data-section="users">
+          <span>👥 User Management</span>
+        </a>
+        <a href="#" class="nav-item" data-section="audit">
+          <span>🔍 Audit Logs</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- SECTION: DASHBOARD -->
+      <section id="section-dashboard" class="app-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Executive Dashboard</h1>
+            <div class="page-subtitle">University-wide MoU Progress & Key Performance Indicators</div>
+          </div>
+          <button class="btn btn-primary" onclick="openAddMouModal()">+ Add New MoU</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">📁</div>
+            <div>
+              <div class="kpi-value" id="kpiTotal">0</div>
+              <div class="kpi-label">Total Active MoUs</div>
+            </div>
+          </div>
+          <div class="kpi-card signed">
+            <div class="kpi-icon">✍️</div>
+            <div>
+              <div class="kpi-value" id="kpiSigned">0</div>
+              <div class="kpi-label">Signed MoUs (100%)</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">⏳</div>
+            <div>
+              <div class="kpi-value" id="kpiInProgress">0</div>
+              <div class="kpi-label">In Progress</div>
+            </div>
+          </div>
+          <div class="kpi-card onhold">
+            <div class="kpi-icon">⏸️</div>
+            <div>
+              <div class="kpi-value" id="kpiOnHold">0</div>
+              <div class="kpi-label">On Hold</div>
+            </div>
+          </div>
+          <div class="kpi-card warning">
+            <div class="kpi-icon">⚠️</div>
+            <div>
+              <div class="kpi-value" id="kpiExpiring">0</div>
+              <div class="kpi-label">Expiring in 90 Days</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 340px 1fr 360px; gap:24px;">
+          <!-- Hero Portfolio Ring -->
+          <div class="card" style="text-align:center;">
+            <div class="card-title">Portfolio Progress Ring</div>
+            <div id="dashboardHeroRing" style="margin:20px 0;"></div>
+            <div style="font-size:12px; color:var(--text-muted);">Overall average completion across all university departments</div>
+          </div>
+
+          <!-- Status Distribution -->
+          <div class="card">
+            <div class="card-title">MoU Lifecycle Stage Distribution</div>
+            <div id="statusDistChart"></div>
+          </div>
+
+          <!-- Action Required Panel -->
+          <div class="card">
+            <div class="card-title">Action Required Alerts</div>
+            <div id="actionRequiredList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: DEPARTMENT PROGRESS -->
+      <section id="section-departments" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Department Progress</h1>
+            <div class="page-subtitle">Track MoU execution performance by Academic Department</div>
+          </div>
+        </div>
+        <div class="dept-grid" id="deptProgressGrid"></div>
+      </section>
+
+      <!-- SECTION: MOU TRACKER -->
+      <section id="section-mou-tracker" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">MoU Tracker</h1>
+            <div class="page-subtitle">Complete MoU Lifecycle Table & Interactive Kanban Board</div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button id="btnViewTable" class="btn btn-primary btn-sm">📄 Table View</button>
+            <button id="btnViewKanban" class="btn btn-secondary btn-sm">🗂️ Kanban View</button>
+            <button class="btn btn-primary" onclick="openAddMouModal()">+ Add New MoU</button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card" style="padding:14px; margin-bottom:18px;">
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+            <div style="flex:1; min-width:200px;">
+              <label class="form-label">Filter Department</label>
+              <select id="filterDept" class="form-select">
+                <option value="">All Departments</option>
+                <option value="1">Computer Science & Engineering</option>
+                <option value="2">Electronics & Communication</option>
+                <option value="3">Electrical & Electronics</option>
+                <option value="4">Mechanical Engineering</option>
+                <option value="5">Civil Engineering</option>
+                <option value="6">Information Technology</option>
+                <option value="7">AI & Data Science</option>
+                <option value="8">Management Studies (MBA)</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:200px;">
+              <label class="form-label">Filter Status</label>
+              <select id="filterStatus" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Initial Communication">Initial Communication (10%)</option>
+                <option value="Discussion in Progress">Discussion in Progress (25%)</option>
+                <option value="Draft MoU to be Prepared">Draft MoU to be Prepared (40%)</option>
+                <option value="Draft Shared with Company">Draft Shared with Company (55%)</option>
+                <option value="Draft Under Review">Draft Under Review (65%)</option>
+                <option value="Revision / Clarification Required">Revision / Clarification Required (75%)</option>
+                <option value="Approval Awaited">Approval Awaited (85%)</option>
+                <option value="Signing Date to be Finalized">Signing Date to be Finalized (95%)</option>
+                <option value="Signed">Signed (100%)</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Not Proceeding">Not Proceeding</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:180px;">
+              <label class="form-label">Health Tag</label>
+              <select id="filterHealth" class="form-select">
+                <option value="">All Health Tags</option>
+                <option value="Good">Good</option>
+                <option value="At Risk">At Risk</option>
+                <option value="Delayed">Delayed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="mouTableViewContainer" class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title & Industry</th>
+                  <th>Department</th>
+                  <th>Current Status</th>
+                  <th>Progress</th>
+                  <th>Next Activity</th>
+                  <th>Owner</th>
+                  <th>Days in Stage</th>
+                  <th>Health</th>
+                </tr>
+              </thead>
+              <tbody id="mouTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="mouKanbanViewContainer" style="display:none;"></div>
+      </section>
+
+      <!-- SECTION: SIGNED REGISTER -->
+      <section id="section-signed-register" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Signed MoUs Register</h1>
+            <div class="page-subtitle">Official repository of active signed Memorandum of Understanding agreements</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title & Partner Industry</th>
+                  <th>Department</th>
+                  <th>Signing Date</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="signedTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: INDUSTRIES -->
+      <section id="section-industries" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Industry Partners</h1>
+            <div class="page-subtitle">Corporate directory and contact details</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Industry Name</th>
+                  <th>Sector</th>
+                  <th>Contact Person</th>
+                  <th>Contact Email / Phone</th>
+                  <th>Active MoUs</th>
+                </tr>
+              </thead>
+              <tbody id="industriesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: COMMITMENTS -->
+      <section id="section-commitments" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">MoU Commitments Tracker</h1>
+            <div class="page-subtitle">Deliverables, student internships, FDPs and joint research targets</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>MoU Title</th>
+                  <th>Commitment Title</th>
+                  <th>Target</th>
+                  <th>Achieved</th>
+                  <th>Owner</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="commitmentsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: MEETINGS -->
+      <section id="section-meetings" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Visits & Meetings</h1>
+            <div class="page-subtitle">Log of industry interaction meetings, discussions, and action items</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Industry Partner</th>
+                  <th>Purpose</th>
+                  <th>Outcome</th>
+                  <th>Next Action</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody id="meetingsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: COE & MONETISATION -->
+      <section id="section-coe" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Centre of Excellence & Monetisation</h1>
+            <div class="page-subtitle">Industry-sponsored COE labs, activities and revenue tracks</div>
+          </div>
+        </div>
+
+        <div id="coeCardsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-bottom:24px;"></div>
+
+        <div class="card">
+          <div class="card-title">COE Revenue Items Ledger</div>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>COE Name</th>
+                  <th>Revenue Source</th>
+                  <th>Amount (INR)</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="revenueTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: REPORTS & EXPORT -->
+      <section id="section-reports" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Reports & Export Centre</h1>
+            <div class="page-subtitle">Generate official Excel registers, PDF executive summaries and import CSV data</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+          <div class="card">
+            <div class="card-title">📊 Excel Reports</div>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Export formatted Excel workbooks matching university audit schemas.</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <a href="/api/reports/mou-status.xlsx" class="btn btn-secondary" target="_blank">Download MoU Status Register (.xlsx)</a>
+              <a href="/api/reports/commitments.xlsx" class="btn btn-secondary" target="_blank">Download Commitments Report (.xlsx)</a>
+              <a href="/api/reports/coe-revenue.xlsx" class="btn btn-secondary" target="_blank">Download COE Revenue Report (.xlsx)</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📄 PDF Executive Summary</div>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Download printable PDF summary report for Chairperson and Governing Body meetings.</p>
+            <a href="/api/reports/mou-summary.pdf" class="btn btn-primary" target="_blank">Download PDF Executive Summary</a>
+          </div>
+
+          <div class="card" style="border:2px dashed var(--border-color); background:rgba(241,245,249,0.5);">
+            <div class="card-title">📥 Bulk Excel Auto-Update</div>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Drag and drop your updated Excel files here to automatically synchronize the dashboard data.</p>
+            <div id="excelDropZone" style="border:2px dashed var(--primary); border-radius:8px; padding:32px 16px; text-align:center; cursor:pointer; background:white; transition:all 0.2s;">
+              <div style="font-size:32px; margin-bottom:12px;">📊</div>
+              <div style="font-size:14px; font-weight:700; color:var(--primary); margin-bottom:4px;">Drop Excel file here</div>
+              <div style="font-size:12px; color:var(--text-muted);">or click to browse (.xlsx, .xls)</div>
+              <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display:none;" onchange="handleExcelUpload(this.files[0])" />
+            </div>
+            <div id="uploadStatus" style="font-size:12px; margin-top:12px; font-weight:600; text-align:center; display:none;"></div>
+          </div>
+        </div>
+
+        <script>
+          const dropZone = document.getElementById('excelDropZone');
+          const fileInput = document.getElementById('excelFileInput');
+          const statusDiv = document.getElementById('uploadStatus');
+
+          dropZone.addEventListener('click', () => fileInput.click());
+          dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.background = 'var(--bg-light)';
+            dropZone.style.borderColor = 'var(--secondary)';
+          });
+          dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.background = 'white';
+            dropZone.style.borderColor = 'var(--primary)';
+          });
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.background = 'white';
+            dropZone.style.borderColor = 'var(--primary)';
+            if (e.dataTransfer.files.length) handleExcelUpload(e.dataTransfer.files[0]);
+          });
+
+          async function handleExcelUpload(file) {
+            if (!file) return;
+            statusDiv.style.display = 'block';
+            statusDiv.style.color = 'var(--accent-blue)';
+            statusDiv.textContent = 'Uploading and processing ' + file.name + '...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+              const response = await fetch('/api/dashboard/upload-excel', {
+                method: 'POST',
+                body: formData
+              });
+              const result = await response.json();
+              
+              if (result.success) {
+                statusDiv.style.color = 'var(--accent-green)';
+                statusDiv.textContent = '✅ Successfully updated database from ' + file.name + '! Imported ' + result.count + ' records.';
+                if(typeof loadDashboard === 'function') loadDashboard();
+              } else {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.textContent = '❌ Upload failed: ' + result.message;
+              }
+            } catch (err) {
+              statusDiv.style.color = 'var(--accent-red)';
+              statusDiv.textContent = '❌ Upload failed: ' + err.message;
+            }
+          }
+        </script>
+      </section>
+
+      <!-- SECTION: USER MANAGEMENT -->
+      <section id="section-users" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">User Management</h1>
+            <div class="page-subtitle">Manage system users, roles and department permissions</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: AUDIT LOGS -->
+      <section id="section-audit" class="app-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">System Audit Logs</h1>
+            <div class="page-subtitle">Complete chronological record of user actions and status changes</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Entity</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MOU DETAIL SIDE DRAWER -->
+  <div id="mouDrawerBackdrop" class="drawer-backdrop" onclick="closeMouDetailDrawer()"></div>
+  <div id="mouDrawer" class="drawer-overlay">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div>
+        <h2 id="drawerMouTitle" style="font-size:18px; font-weight:800;">MoU Detail</h2>
+        <div id="drawerIndustryName" style="font-size:12px; color:var(--text-muted);">Industry Partner</div>
+      </div>
+      <button onclick="closeMouDetailDrawer()" class="btn btn-secondary btn-sm">✕ Close</button>
+    </div>
+
+    <!-- Large Ring Visual -->
+    <div style="display:flex; justify-content:center; margin:20px 0;">
+      <div id="drawerLargeRing"></div>
+    </div>
+
+    <!-- MoU Details -->
+    <div class="card" style="padding:16px;">
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">Purpose & Scope</div>
+      <div id="drawerPurpose" style="font-size:13px;">-</div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; font-size:12px;">
+        <div>Signing Date: <strong id="drawerMouDate">-</strong></div>
+        <div>Expiry Date: <strong id="drawerExpiryDate">-</strong></div>
+        <div style="grid-column: span 2;">Next Activity: <strong id="drawerNextActivity">-</strong></div>
+      </div>
+    </div>
+
+    <!-- Status Change Timeline -->
+    <div class="card" style="padding:16px;">
+      <div class="card-title" style="font-size:14px;">Status Timeline</div>
+      <div id="drawerTimeline" class="timeline"></div>
+    </div>
+
+    <!-- Image Gallery -->
+    <div class="card" style="padding:16px;">
+      <div class="card-title" style="font-size:14px;">Signing Photos & Event Gallery</div>
+      <div id="drawerGallery" class="gallery-grid"></div>
+    </div>
+
+    <!-- Documents -->
+    <div class="card" style="padding:16px;">
+      <div class="card-title" style="font-size:14px;">Documents & Draft Copies</div>
+      <div id="drawerDocsList"></div>
+    </div>
+
+    <!-- Chairperson / Admin Remarks -->
+    <div class="card" style="padding:16px;">
+      <div class="card-title" style="font-size:14px;">Executive Remarks & Comments</div>
+      <div id="drawerCommentsList" style="margin-bottom:12px;"></div>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="newRemarkInput" class="form-input" placeholder="Type an executive remark..." />
+        <button class="btn btn-primary btn-sm" onclick="addChairpersonRemark()">Post</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MOU MODAL -->
+  <div id="addMouModal" class="modal-overlay">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="font-size:18px; font-weight:700;">Add New MoU Agreement</h2>
+        <button onclick="closeAddMouModal()" class="btn btn-secondary btn-sm">✕</button>
+      </div>
+      <form id="addMouForm">
+        <div class="form-group">
+          <label class="form-label">MoU Title *</label>
+          <input type="text" id="newMouTitle" class="form-input" required placeholder="e.g. TCS Centre of Excellence in AI" />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Industry Partner *</label>
+            <select id="newMouIndustry" class="form-select" required>
+              <option value="1">Tata Consultancy Services</option>
+              <option value="2">Infosys Technologies Ltd</option>
+              <option value="3">Wipro Digital & Engineering</option>
+              <option value="4">Larsen & Toubro (L&T)</option>
+              <option value="5">Bosch India Pvt Ltd</option>
+              <option value="6">Texas Instruments India</option>
+              <option value="7">AWS India (Amazon Web Services)</option>
+              <option value="8">Cisco Systems India</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Department *</label>
+            <select id="newMouDept" class="form-select" required>
+              <option value="1">Computer Science & Engineering</option>
+              <option value="2">Electronics & Communication</option>
+              <option value="3">Electrical & Electronics</option>
+              <option value="4">Mechanical Engineering</option>
+              <option value="5">Civil Engineering</option>
+              <option value="6">Information Technology</option>
+              <option value="7">AI & Data Science</option>
+              <option value="8">Management Studies (MBA)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Purpose & Scope</label>
+          <textarea id="newMouPurpose" class="form-textarea" rows="3" placeholder="Define deliverables, lab setup, or curriculum alignment..."></textarea>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Initial Status</label>
+            <select id="newMouStatus" class="form-select">
+              <option value="Initial Communication">Initial Communication (10%)</option>
+              <option value="Discussion in Progress">Discussion in Progress (25%)</option>
+              <option value="Draft MoU to be Prepared">Draft MoU to be Prepared (40%)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Health Tag</label>
+            <select id="newMouHealth" class="form-select">
+              <option value="Good">Good</option>
+              <option value="At Risk">At Risk</option>
+              <option value="Delayed">Delayed</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:end; gap:12px; margin-top:20px;">
+          <button type="button" onclick="closeAddMouModal()" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create MoU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/progress-ring.js"></script>
+  <script src="/js/admin.js"></script>
+  <script>
+    function openAddMouModal() {
+      document.getElementById('addMouModal').classList.add('active');
+    }
+    function closeAddMouModal() {
+      document.getElementById('addMouModal').classList.remove('active');
+    }
+
+    document.getElementById('addMouForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('newMouTitle').value;
+      const industry_id = document.getElementById('newMouIndustry').value;
+      const department_id = document.getElementById('newMouDept').value;
+      const purpose = document.getElementById('newMouPurpose').value;
+      const status = document.getElementById('newMouStatus').value;
+      const health = document.getElementById('newMouHealth').value;
+
+      try {
+        const res = await apiRequest('/mous', 'POST', {
+          title, industry_id, department_id, purpose, status, health
+        });
+        if (res && res.success) {
+          closeAddMouModal();
+          loadMouTrackerData();
+          loadDashboardData();
+        }
+      } catch (err) {
+        alert('Error creating MoU: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

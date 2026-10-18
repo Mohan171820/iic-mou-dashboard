@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MoU Management System</title>
+</head>
+<body>
+  <script src="/js/api.js"></script>
+  <script>
+    checkAuthUser().then(user => {
+      if (user) {
+        window.location.href = '/chairperson';
+      } else {
+        window.location.href = '/login';
+      }
+    });
+  </script>
+</body>
+</html>

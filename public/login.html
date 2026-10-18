@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Executive Portal — Chairperson Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-dark: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.72);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --card-border-focus: rgba(99, 102, 241, 0.6);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --gold: #f59e0b;
+      --gold-light: #fef3c7;
+      --gold-dark: #b45309;
+      --txt-white: #ffffff;
+      --txt-muted: #94a3b8;
+      --txt-sub: #cbd5e1;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(217, 119, 6, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(30, 27, 75, 0.4) 0%, transparent 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Decorative Rings */
+    .bg-blur-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 420px;
+      height: 420px;
+      background: rgba(79, 70, 229, 0.18);
+      top: -80px;
+      left: -80px;
+    }
+    .orb-2 {
+      width: 380px;
+      height: 380px;
+      background: rgba(245, 158, 11, 0.14);
+      bottom: -60px;
+      right: -60px;
+    }
+
+    .main-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header Brand */
+    .portal-emblem {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 12px 28px rgba(79, 70, 229, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .portal-emblem:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 16px 36px rgba(79, 70, 229, 0.45);
+    }
+    .emblem-icon {
+      font-size: 30px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    }
+    .emblem-crown {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.4);
+      border: 2px solid var(--bg-dark);
+    }
+
+    /* Card Container */
+    .login-card {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 38px 34px;
+      box-shadow: 
+        0 24px 50px -12px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .badge-executive {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--txt-white);
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--txt-muted);
+      line-height: 1.45;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--txt-sub);
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: #64748b;
+      font-size: 15px;
+      pointer-events: none;
+      transition: color 0.2s ease;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px 12px 42px;
+      font-size: 14px;
+      color: var(--txt-white);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .form-input::placeholder {
+      color: #475569;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+      background: rgba(30, 41, 59, 0.7);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+    .form-input:focus ~ .input-icon {
+      color: var(--primary);
+    }
+    .toggle-pwd {
+      position: absolute;
+      right: 14px;
+      cursor: pointer;
+      color: #64748b;
+      font-size: 15px;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .toggle-pwd:hover {
+      color: var(--txt-sub);
+    }
+
+    /* Remember & Security */
+    .form-extra {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      font-size: 12px;
+      color: var(--txt-muted);
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember-label input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #10b981;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    /* Primary Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #4338ca 100%);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.38);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(79, 70, 229, 0.5);
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 50%, #3730a3 100%);
+    }
+    .btn-submit:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+    .btn-submit:disabled {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    /* Error Banner */
+    .error-banner {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Chairperson Quick Access Box */
+    .quick-access-sec {
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+    .qa-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--txt-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .qa-card {
+      background: linear-gradient(135deg, rgba(254, 243, 199, 0.06) 0%, rgba(217, 119, 6, 0.04) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .qa-card:hover {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.45);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.15);
+    }
+    .qa-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .qa-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f59e0b, #b45309);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(180, 83, 9, 0.35);
+      flex-shrink: 0;
+    }
+    .qa-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef3c7;
+      line-height: 1.2;
+    }
+    .qa-role {
+      font-size: 11px;
+      color: #fde68a;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    .qa-btn-pill {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .qa-card:hover .qa-btn-pill {
+      background: #f59e0b;
+      color: #78350f;
+    }
+
+    /* Footer text */
+    .portal-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .portal-footer span {
+      color: #94a3b8;
+    }
+
+    /* Spinner Animation */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient blur lights -->
+  <div class="bg-blur-orb orb-1"></div>
+  <div class="bg-blur-orb orb-2"></div>
+
+  <div class="main-wrapper">
+
+    <!-- Top Insignia Emblem -->
+    <div class="portal-emblem">
+      <span class="emblem-icon">🏛️</span>
+      <div class="emblem-crown">★</div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+
+      <div class="card-header">
+        <div class="badge-executive">Executive Portal</div>
+        <h1 class="card-title">Chairperson Sign In</h1>
+        <p class="card-subtitle">Strategic institutional intelligence, MoU pipeline, and executive decision registers</p>
+      </div>
+
+      <!-- Error Message Box -->
+      <div id="loginError" class="error-banner">
+        <span>⚠️</span>
+        <span id="loginErrorText">Invalid credentials.</span>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">
+            <span>Executive Email Address</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-input" 
+              required 
+              placeholder="chairperson@college.edu" 
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">
+            <span>Access Key / Password</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-input" 
+              required 
+              placeholder="••••••••" 
+              autocomplete="current-password"
+            />
+            <button type="button" class="toggle-pwd" id="togglePwd" title="Show/Hide Password">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div class="form-extra">
+          <label class="remember-label">
+            <input type="checkbox" id="rememberMe" checked />
+            <span>Keep me logged in</span>
+          </label>
+          <span class="secure-badge">
+            <span>🛡️</span> 256-Bit SSL
+          </span>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          <span id="btnText">Access Executive Portal &rarr;</span>
+          <div class="spinner" id="btnSpinner"></div>
+        </button>
+      </form>
+
+      <!-- Exclusive Chairperson Quick Access -->
+      <div class="quick-access-sec">
+        <div class="qa-label">
+          <span>Official Executive Access</span>
+          <span style="color:#10b981;font-weight:700;">● Active</span>
+        </div>
+        <div class="qa-card" onclick="fillChairpersonLogin()" title="1-Click Fill Chairperson Credentials">
+          <div class="qa-left">
+            <div class="qa-avatar">🏛️</div>
+            <div>
+              <div class="qa-name">DR. R. ShivaKumar</div>
+              <div class="qa-role">Chairman &amp; Executive Director</div>
+            </div>
+          </div>
+          <div class="qa-btn-pill">Fill Credentials &rarr;</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Institutional Footer -->
+    <div class="portal-footer">
+      University Directorate of Industry Relations &amp; Institutional MoUs<br>
+      <span>Confidential &amp; Proprietary Executive Intelligence</span>
+    </div>
+
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    // Password toggle
+    const pwdInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('togglePwd');
+    toggleBtn.addEventListener('click', () => {
+      const isPwd = pwdInput.type === 'password';
+      pwdInput.type = isPwd ? 'text' : 'password';
+      toggleBtn.textContent = isPwd ? '🙈' : '👁️';
+    });
+
+    // 1-Click Fill for Chairperson only
+    function fillChairpersonLogin() {
+      document.getElementById('email').value = 'chairperson@college.edu';
+      document.getElementById('password').value = 'Chair@123';
+      document.getElementById('password').type = 'password';
+      toggleBtn.textContent = '👁️';
+      document.getElementById('loginError').style.display = 'none';
+      
+      // Highlight the submit button to encourage immediate sign in
+      const btn = document.getElementById('btnSubmit');
+      btn.focus();
+    }
+
+    // Auto-fill on initial load for maximum convenience
+    document.addEventListener('DOMContentLoaded', () => {
+      fillChairpersonLogin();
+    });
+
+    // Handle Login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errDiv = document.getElementById('loginError');
+      const errText = document.getElementById('loginErrorText');
+      const btn = document.getElementById('btnSubmit');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('btnSpinner');
+
+      errDiv.style.display = 'none';
+      btn.disabled = true;
+      btnText.textContent = 'Verifying Credentials...';
+      spinner.style.display = 'inline-block';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await apiRequest('/auth/login', 'POST', { email, password });
+        if (res && res.success) {
+          btnText.textContent = 'Opening Executive Portal...';
+          // Always redirect straight to Chairperson Portal
+          window.location.href = '/chairperson';
+        } else {
+          throw new Error(res.message || 'Authentication failed.');
+        }
+      } catch (err) {
+        errText.textContent = err.message || 'Invalid email or password.';
+        errDiv.style.display = 'flex';
+        btn.disabled = false;
+        btnText.textContent = 'Access Executive Portal →';
+        spinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

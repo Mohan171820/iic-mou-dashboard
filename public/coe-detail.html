@@ -1,0 +1,4104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centre of Excellence Analytics &amp; Dashboard | SRMIST Ramapuram</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for High-Fidelity Interactive Data Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ========================================================
+       DESIGN TOKENS & BRAND PALETTE (HARD CONSTRAINTS)
+       Deep Navy + Gold Accent on Soft Off-White Background
+       ======================================================== */
+    :root {
+      --navy-900: #061E4A;
+      --navy-800: #0B2968;
+      --navy-700: #123B88;
+      --blue-600: #1E64D4;
+      --blue-500: #2563EB;
+      --blue-50:  #EFF6FF;
+      --blue-100: #DBEAFE;
+      --gold-600: #D97706;
+      --gold-500: #F5C518;
+      --gold-400: #FCD34D;
+      --gold-100: #FEF3C7;
+      --gold-50:  #FFFBEB;
+      --cream-50: #F8FAFC;
+      --cream-100:#F1F5F9;
+      --white:    #FFFFFF;
+      --ink-900:  #0F172A;
+      --ink-700:  #334155;
+      --ink-600:  #475569;
+      --ink-400:  #94A3B8;
+      --border-light: #E2E8F0;
+      --border-card:  #CBD5E1;
+
+      /* Type Scale & Metrics */
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Sora', 'Inter', -apple-system, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-2xl: 24px;
+
+      /* Layered Elevation */
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03);
+      --shadow-lg: 0 12px 30px rgba(15, 23, 42, 0.07), 0 4px 8px rgba(15, 23, 42, 0.03);
+      --shadow-xl: 0 20px 40px rgba(6, 30, 74, 0.12);
+    }
+
+    /* Core Document Reset with Accessible Typography */
+    body.coe-detail-page {
+      background-color: var(--cream-50);
+      color: var(--ink-900);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: 0 !important;
+      min-height: 100vh;
+      padding-top: 130px;
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    p, span, li, input, textarea, select, button, a {
+      letter-spacing: 0 !important;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      color: var(--ink-900);
+      line-height: 1.25;
+      margin-top: 0;
+    }
+
+    h1 { font-size: clamp(2.4rem, 4vw, 3.2rem); font-weight: 800; }
+    h2 { font-size: clamp(1.8rem, 2.5vw, 2.25rem); font-weight: 800; }
+    h3 { font-size: 1.35rem; font-weight: 700; }
+    h4 { font-size: 1.15rem; font-weight: 700; }
+
+    /* Accessibility: Visible Focus Rings */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--gold-500) !important;
+      outline-offset: 3px !important;
+    }
+
+    /* SVG Icons utility */
+    .svg-icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      stroke-width: 1.75;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+
+    .svg-icon-lg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .svg-icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Consistent Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+      box-sizing: border-box;
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ========================================================
+       SECTION A: REFINED HERO
+       Deep navy gradient, gold bottom accent, dot-grid depth
+       ======================================================== */
+    .coe-hero {
+      background: radial-gradient(circle at 85% 20%, rgba(30, 100, 212, 0.35) 0%, transparent 60%),
+                  linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 55%, #050D1C 100%);
+      color: var(--white);
+      padding: 56px 0 52px;
+      border-bottom: 4px solid var(--gold-500);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Neural network / dot-grid subtle background pattern (6% opacity) */
+    .coe-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    .hero-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .hero-breadcrumb a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+
+    .hero-breadcrumb a:hover {
+      color: var(--gold-400);
+    }
+
+    .hero-breadcrumb .sep {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.75rem;
+    }
+
+    .hero-breadcrumb .current {
+      color: var(--gold-400);
+      font-weight: 600;
+    }
+
+    .coe-hero-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .coe-hero-text {
+      flex: 1;
+      max-width: 780px;
+    }
+
+    .coe-badge-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .coe-partner-pill {
+      background: rgba(245, 197, 24, 0.14);
+      color: var(--gold-400);
+      border: 1px solid rgba(245, 197, 24, 0.4);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .coe-dept-pill {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .coe-hero-text h1 {
+      color: var(--white);
+      margin-bottom: 14px;
+      letter-spacing: -0.015em !important;
+      font-weight: 800;
+    }
+
+    .coe-hero-desc {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #E2E8F0;
+      max-width: 720px;
+      margin-bottom: 24px;
+    }
+
+    /* Key Facts Row */
+    .hero-key-facts-strip {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      padding: 12px 18px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      margin-bottom: 28px;
+      width: fit-content;
+      flex-wrap: wrap;
+    }
+
+    .fact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: #F8FAFC;
+    }
+
+    .fact-item .fact-icon {
+      color: var(--gold-400);
+    }
+
+    .fact-item strong {
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .fact-sep {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Action Buttons */
+    .hero-actions-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-gold-primary {
+      background: linear-gradient(135deg, var(--gold-500) 0%, #EAB308 100%);
+      color: var(--navy-900);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 13px 24px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(245, 197, 24, 0.35);
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-gold-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245, 197, 24, 0.45);
+      color: var(--navy-900);
+    }
+
+    .btn-navy-outline {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 22px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-navy-outline:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: var(--gold-400);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* Refined Glass Icon Tile with Soft Gold Glow */
+    .coe-hero-glass-tile {
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid rgba(245, 197, 24, 0.35);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 40px rgba(245, 197, 24, 0.2);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .coe-hero-glass-tile img {
+      width: 75%;
+      height: 75%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    }
+
+    /* ========================================================
+       SECTION B: STICKY SUB-NAVIGATION
+       Scroll-spy, gold underline highlight, horizontal swipe on mobile
+       ======================================================== */
+    .sticky-subnav {
+      position: sticky;
+      top: 80px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .subnav-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0 4px;
+    }
+
+    .subnav-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .subnav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink-600);
+      text-decoration: none;
+      white-space: nowrap;
+      position: relative;
+      transition: color 0.18s ease;
+    }
+
+    .subnav-link:hover {
+      color: var(--navy-900);
+    }
+
+    .subnav-link.active {
+      color: var(--navy-900);
+      font-weight: 700;
+    }
+
+    .subnav-link.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 18px;
+      right: 18px;
+      height: 3px;
+      background: var(--gold-500);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* ========================================================
+       SECTION WRAPPERS & STANDARDIZED LEFT-ALIGNED HEADERS
+       (Fix Bug #1: Left stack: gold accent bar, H2, max-width 640px sub)
+       ======================================================== */
+    .coe-section-wrap {
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .section-header-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 36px;
+      text-align: left;
+    }
+
+    .gold-accent-bar {
+      width: 44px;
+      height: 4px;
+      background: var(--gold-500);
+      border-radius: 2px;
+      margin-bottom: 12px;
+    }
+
+    .section-header-stack h2 {
+      color: var(--navy-900);
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle-text {
+      color: var(--ink-600);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 0;
+    }
+
+    /* Standard Card Properties (Constraint #4: Consistent 24-32px padding, 16px radius) */
+    .polished-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .polished-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-card);
+    }
+
+    /* ========================================================
+       SECTION C: KEY PERFORMANCE HIGHLIGHTS (4 KPI CARDS)
+       Count-up animation, soft tinted square icons, pill badges
+       ======================================================== */
+    .kpi-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-bottom: 48px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 26px 24px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .kpi-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em !important;
+      color: var(--ink-600);
+    }
+
+    .kpi-icon-bubble {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--blue-100);
+    }
+
+    .kpi-val {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 3vw, 2.75rem);
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .kpi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #065F46;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      padding: 4px 12px;
+      border-radius: 50px;
+      width: fit-content;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .kpi-badge.info {
+      color: #0369A1;
+      background: #F0F9FF;
+      border-color: #BAE6FD;
+    }
+
+    /* ========================================================
+       SECTION D: SKILL TRACK DONUT + TALENT CONVERSION FUNNEL
+       (Fix Bug #2: vertically center chart & legend, equal height sibling cards)
+       ======================================================== */
+    .analytics-equal-row {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: stretch;
+    }
+
+    .chart-box-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .chart-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+
+    .chart-box-header h3 {
+      color: var(--navy-900);
+      margin-bottom: 4px;
+    }
+
+    .chart-tag-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy-700);
+      background: var(--cream-100);
+      border: 1px solid var(--border-light);
+      padding: 4px 12px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    /* Donut Area centered without dead space */
+    .donut-layout-centered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-grow: 1;
+      margin: auto 0;
+    }
+
+    .donut-canvas-container {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      flex-shrink: 0;
+    }
+
+    .donut-center-info {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-center-val {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.1;
+      display: block;
+    }
+
+    .donut-center-lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em !important;
+      color: var(--ink-600);
+    }
+
+    .donut-legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.18s ease;
+    }
+
+    .legend-item:hover {
+      background: var(--cream-100);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-text-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .legend-title {
+      font-weight: 600;
+      color: var(--ink-700);
+    }
+
+    .legend-val {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    /* Talent Conversion Funnel */
+    .funnel-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .funnel-stage-card {
+      background: var(--cream-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .funnel-stage-card:hover {
+      background: var(--white);
+      border-color: var(--blue-600);
+      box-shadow: var(--shadow-sm);
+      transform: translateX(4px);
+    }
+
+    .funnel-stage-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink-700);
+      margin-bottom: 6px;
+    }
+
+    .funnel-stage-val {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .funnel-bar-track {
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .funnel-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stage-1 { background: linear-gradient(90deg, #1E64D4, #061E4A); }
+    .stage-2 { background: linear-gradient(90deg, #0284C7, #1E64D4); }
+    .stage-3 { background: linear-gradient(90deg, var(--gold-600), var(--gold-500)); }
+    .stage-4 { background: linear-gradient(90deg, #059669, #10B981); }
+
+    .funnel-conversion-badge {
+      font-size: 0.75rem;
+      color: var(--ink-600);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .funnel-conversion-badge.highlight {
+      color: #92400E;
+      background: var(--gold-100);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    /* ========================================================
+       SECTION E: INDUSTRY PROJECTS & DEPLOYMENTS
+       Clean cards: icon, title, count badge, partner chips
+       ======================================================== */
+    .sector-project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .sector-project-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .sector-project-card:hover {
+      border-color: var(--blue-600);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .sector-project-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .sector-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sector-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .sector-project-title {
+      font-weight: 700;
+      color: var(--navy-900);
+      font-size: 0.98rem;
+    }
+
+    .sector-sprint-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0369A1;
+      background: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      padding: 3px 10px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    .sector-share-label {
+      font-size: 0.74rem;
+      color: var(--ink-600);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sector-track-clean {
+      height: 6px;
+      background: #E2E8F0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .sector-track-clean .fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--navy-900), var(--blue-600));
+    }
+
+    .partner-chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .partner-chip {
+      font-size: 0.76rem;
+      color: var(--ink-700);
+      background: var(--cream-50);
+      border: 1px solid var(--border-light);
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ========================================================
+       SECTION F: IMPACT PIPELINE FLOW
+       Numbered columns, clear gold chevrons, left accent border
+       ======================================================== */
+    .pipeline-grid-columns {
+      display: grid;
+      grid-template-columns: 1fr 50px 1.2fr 50px 1.2fr;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .pipeline-col-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pipeline-col-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em !important;
+      color: var(--navy-900);
+      margin-bottom: 4px;
+    }
+
+    .col-num-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--navy-900);
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .pipeline-node-card {
+      background: var(--cream-50);
+      border: 1px solid var(--border-light);
+      border-left: 4px solid var(--blue-600);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .pipeline-col-2 .pipeline-node-card {
+      border-left-color: var(--gold-600);
+    }
+
+    .pipeline-col-3 .pipeline-node-card {
+      border-left-color: #059669;
+    }
+
+    .pipeline-node-card:hover {
+      background: var(--white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pipeline-node-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    .pipeline-node-val {
+      font-size: 0.78rem;
+      color: var(--ink-600);
+    }
+
+    .pipeline-chevron-connector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--gold-500);
+    }
+
+    /* ========================================================
+       SECTION G: ENGAGEMENT AREAS & INITIATIVES
+       Unique SVG icon per card, gradient photo slot (16:10), learn more
+       ======================================================== */
+    .engagement-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .engagement-item-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .engagement-item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .engagement-img-slot {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .engagement-img-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .engagement-item-card:hover .engagement-img-slot img {
+      transform: scale(1.05);
+    }
+
+    .engagement-badge-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(6, 30, 74, 0.85);
+      backdrop-filter: blur(4px);
+      color: var(--gold-400);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 50px;
+      border: 1px solid rgba(245, 197, 24, 0.3);
+    }
+
+    .engagement-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+      gap: 12px;
+    }
+
+    .engagement-card-top-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .engagement-card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .engagement-card-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      line-height: 1.3;
+    }
+
+    .engagement-card-desc {
+      font-size: 0.86rem;
+      color: var(--ink-600);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .engagement-learn-more {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--blue-600);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.18s ease;
+      margin-top: 4px;
+    }
+
+    .engagement-learn-more:hover {
+      color: var(--navy-900);
+    }
+
+    /* ========================================================
+       SECTION H: MEDIA & PHOTO SHOWCASE
+       3 cols desktop, captions below/overlay, keyboard-nav lightbox
+       ======================================================== */
+    .gallery-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .gallery-photo-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gallery-photo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gallery-img-container {
+      width: 100%;
+      height: 220px;
+      background: var(--cream-100);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-photo-card:hover .gallery-img-container img {
+      transform: scale(1.05);
+    }
+
+    .gallery-caption-bar {
+      padding: 14px 18px;
+      background: var(--white);
+      border-top: 1px solid var(--border-light);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Accessible Lightbox */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(6, 30, 74, 0.94);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content-box {
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+      background: var(--navy-900);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .lightbox-img-wrap {
+      width: 100%;
+      max-height: 70vh;
+      display: grid;
+      place-items: center;
+      background: #000;
+    }
+
+    .lightbox-img-wrap img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    .lightbox-caption {
+      padding: 16px 24px;
+      color: var(--white);
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: var(--navy-800);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lightbox-btn-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.2s ease;
+      z-index: 2;
+    }
+
+    .lightbox-btn-close:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .lightbox-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.2s ease;
+      z-index: 2;
+    }
+
+    .lightbox-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    /* ========================================================
+       SECTION I: KEY FOCUS AREAS & INFRASTRUCTURE
+       3 equal cards with gold top-border accent and tech chips
+       ======================================================== */
+    .focus-areas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .focus-area-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-top: 4px solid var(--gold-500);
+      border-radius: var(--radius-lg);
+      padding: 30px 26px;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .focus-area-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .focus-area-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .focus-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--gold-50);
+      color: var(--gold-600);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold-100);
+      flex-shrink: 0;
+    }
+
+    .focus-area-card h3 {
+      font-size: 1.15rem;
+      color: var(--navy-900);
+      margin: 0;
+    }
+
+    .focus-area-card p {
+      font-size: 0.92rem;
+      color: var(--ink-600);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .focus-tech-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .tech-tag-chip {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--navy-800);
+      background: var(--blue-50);
+      border: 1px solid var(--blue-100);
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ========================================================
+       SECTION J: LEADERSHIP & IN-CHARGE
+       (Fix Bug #3: Room 402 non-breaking space on full-width row,
+        three aligned buttons with single-line labels, 44-48px height)
+       ======================================================== */
+    .leadership-dual-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .lead-faculty-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .lead-header-row {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .lead-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .lead-avatar-img {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy-900), var(--blue-600));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 800;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 3px var(--gold-500), var(--shadow-md);
+    }
+
+    .verified-badge-icon {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: var(--gold-500);
+      color: var(--navy-900);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--white);
+    }
+
+    .lead-meta-text h3 {
+      font-size: 1.4rem;
+      color: var(--navy-900);
+      margin-bottom: 4px;
+    }
+
+    .lead-designation-pill {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--blue-600);
+      margin-bottom: 4px;
+    }
+
+    .lead-dept-text {
+      font-size: 0.85rem;
+      color: var(--ink-600);
+      line-height: 1.4;
+    }
+
+    /* 2x2 Grid + Full-Width Location Row (Fix Bug #3) */
+    .lead-contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      background: var(--cream-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .lead-contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lead-contact-item.full-width {
+      grid-column: 1 / -1;
+      border-top: 1px solid #E2E8F0;
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .contact-item-lbl {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em !important;
+      color: var(--ink-600);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .contact-item-val {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--navy-900);
+      word-break: break-word;
+    }
+
+    .contact-item-val a {
+      color: var(--navy-900);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+
+    .contact-item-val a:hover {
+      color: var(--blue-600);
+      text-decoration: underline;
+    }
+
+    /* Aligned Button Row (Fix Bug #3: 44-48px height, single-line labels, icon on left) */
+    .lead-actions-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .action-btn-pill {
+      height: 46px;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .action-btn-primary {
+      background: var(--navy-900);
+      color: var(--white);
+      border: 1px solid var(--navy-900);
+      box-shadow: 0 4px 12px rgba(6, 30, 74, 0.2);
+    }
+
+    .action-btn-primary:hover {
+      background: var(--navy-700);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(6, 30, 74, 0.3);
+      color: var(--white);
+    }
+
+    .action-btn-secondary {
+      background: var(--white);
+      color: var(--ink-700);
+      border: 1.5px solid var(--border-card);
+    }
+
+    .action-btn-secondary:hover {
+      background: var(--cream-100);
+      border-color: var(--navy-900);
+      color: var(--navy-900);
+    }
+
+    /* Co-Incharge & Liaison Right Column */
+    .liaison-side-panel {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .liaison-head-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 14px;
+      margin: 0;
+    }
+
+    .liaison-entry-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--cream-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+    }
+
+    .liaison-avatar-sm {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--blue-50);
+      color: var(--blue-600);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid var(--blue-100);
+    }
+
+    .liaison-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .liaison-role-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em !important;
+      color: var(--ink-600);
+    }
+
+    .liaison-name-val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .liaison-sub-desc {
+      font-size: 0.82rem;
+      color: var(--ink-600);
+    }
+
+    /* Direct Academic Support Callout (Constraint J: Soft blue info panel with icon) */
+    .academic-support-callout {
+      background: var(--blue-50);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .academic-support-callout .info-icon {
+      color: var(--blue-600);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .academic-support-callout h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 2px;
+    }
+
+    .academic-support-callout p {
+      font-size: 0.82rem;
+      color: var(--ink-700);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* ========================================================
+       SECTION K: NEW POLISHED SECTIONS
+       1. Industry Partners Logo Strip (grayscale to color on hover)
+       2. Research & IP Summary (patents & Scopus paper tiles)
+       3. Closing CTA Banner
+       ======================================================== */
+    .partners-logo-strip {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 32px 36px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .partners-strip-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em !important;
+      color: var(--ink-600);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .partners-logo-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+
+    .partner-logo-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      background: var(--cream-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .partner-logo-item img {
+      max-height: 38px;
+      max-width: 130px;
+      object-fit: contain;
+      filter: grayscale(100%) opacity(70%);
+      transition: filter 0.25s ease, transform 0.25s ease;
+    }
+
+    .partner-logo-item:hover {
+      background: var(--white);
+      border-color: var(--gold-500);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .partner-logo-item:hover img {
+      filter: grayscale(0%) opacity(100%);
+      transform: scale(1.05);
+    }
+
+    .partner-text-badge {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ink-600);
+      transition: color 0.2s ease;
+    }
+
+    .partner-logo-item:hover .partner-text-badge {
+      color: var(--navy-900);
+    }
+
+    /* Research & IP Summary */
+    .research-ip-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .research-ip-tile {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .research-ip-tile:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .ip-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .ip-icon-square {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--blue-100);
+      flex-shrink: 0;
+    }
+
+    .ip-icon-square.gold-theme {
+      background: var(--gold-50);
+      color: var(--gold-600);
+      border-color: var(--gold-100);
+    }
+
+    .ip-number {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.1;
+    }
+
+    .ip-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink-700);
+      margin-top: 2px;
+    }
+
+    .ip-desc-sub {
+      font-size: 0.8rem;
+      color: var(--ink-600);
+    }
+
+    .ip-view-all-link {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue-600);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: color 0.18s ease;
+    }
+
+    .ip-view-all-link:hover {
+      color: var(--navy-900);
+    }
+
+    /* Closing CTA Banner */
+    .closing-cta-banner {
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 60%, #050D1C 100%);
+      color: var(--white);
+      border-radius: var(--radius-2xl);
+      padding: 56px 48px;
+      box-shadow: var(--shadow-xl);
+      border: 2px solid rgba(245, 197, 24, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 36px;
+      margin-top: 20px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .closing-cta-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .closing-cta-text h2 {
+      color: var(--white);
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .closing-cta-text p {
+      color: #CBD5E1;
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0;
+    }
+
+    .closing-cta-buttons {
+      display: flex;
+      gap: 14px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    /* Floating Scroll-to-Top Button */
+    #back-to-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--navy-900);
+      color: var(--white);
+      border: 2px solid var(--gold-500);
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #back-to-top:hover {
+      transform: translateY(-3px);
+      background: var(--navy-700);
+    }
+
+    /* Reveal On Scroll Animation */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+
+    .reveal-on-scroll.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Modal Styling */
+    .visit-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 30, 74, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .visit-modal-backdrop.open {
+      display: grid;
+    }
+
+    .visit-modal {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 520px;
+      padding: 32px;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--cream-100);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--ink-600);
+    }
+
+    .modal-close-btn:hover {
+      background: var(--border-light);
+      color: var(--navy-900);
+    }
+
+    /* Toast Notification */
+    #contact-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy-900);
+      color: var(--white);
+      border: 1px solid var(--gold-500);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 10001;
+    }
+
+    #contact-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ========================================================
+       RESPONSIVE BREAKPOINTS (Mobile 360px, Tablet 768px, Desktop 1280px+)
+       Strictly No Horizontal Scroll At Any Width
+       ======================================================== */
+    @media (max-width: 1024px) {
+      .kpi-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .analytics-equal-row {
+        grid-template-columns: 1fr;
+      }
+      .sector-project-grid {
+        grid-template-columns: 1fr;
+      }
+      .engagement-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .focus-areas-grid {
+        grid-template-columns: 1fr;
+      }
+      .leadership-dual-grid {
+        grid-template-columns: 1fr;
+      }
+      .closing-cta-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body.coe-detail-page {
+        padding-top: 110px;
+      }
+      .coe-section-wrap {
+        padding: 56px 0;
+      }
+      .coe-hero {
+        padding: 42px 0 38px;
+      }
+      .coe-hero-container {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
+      .gallery-showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .research-ip-grid {
+        grid-template-columns: 1fr;
+      }
+      .pipeline-grid-columns {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .pipeline-chevron-connector {
+        transform: rotate(90deg);
+        margin: 4px 0;
+      }
+      .lead-contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .engagement-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-showcase-grid {
+        grid-template-columns: 1fr;
+      }
+      .lead-actions-row {
+        flex-direction: column;
+        width: 100%;
+      }
+      .action-btn-pill {
+        width: 100%;
+      }
+      .closing-cta-banner {
+        padding: 36px 24px;
+      }
+      #back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+      }
+    }
+  </style>
+</head>
+
+<body class="coe-detail-page">
+
+  <!-- ===== TOP SCROLL PROGRESS BAR ===== -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="Images/image-removebg-preview.png" alt="SRM Logo" class="nav-logo-img">
+        <span>SRM IST IIC Ramapuram</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#ecosystem">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to Ecosystem
+        </a>
+        <a href="index.html#dept-dashboard">MoU Dashboard</a>
+        <a href="#leadership-section" class="btn btn-primary nav-cta">Contact In-Charge</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== SECTION A: HERO ===== -->
+  <section class="coe-hero">
+    <div class="container">
+      
+      <!-- Breadcrumb Navigation -->
+      <nav class="hero-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep">/</span>
+        <a href="index.html#ecosystem">Ecosystem</a>
+        <span class="sep">/</span>
+        <span class="current" id="hero-breadcrumb-current">AI Centre of Excellence</span>
+      </nav>
+
+      <div class="coe-hero-container">
+        <div class="coe-hero-text">
+          
+          <div class="coe-badge-row">
+            <span class="coe-partner-pill">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span id="coe-partner-name">Navigate Labs</span>
+            </span>
+            <span class="coe-dept-pill">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <span id="coe-dept-name">CSE – BDA / Cloud / AI</span>
+            </span>
+          </div>
+
+          <h1 id="coe-title">AI Centre of Excellence</h1>
+
+          <p class="coe-hero-desc" id="coe-description">
+            Inaugurated April 2026. Specialized center for Generative AI, foundational model fine-tuning, computer vision pipelines, and intensive industry sprints for SRMIST students and faculty.
+          </p>
+
+          <!-- Key Facts Strip -->
+          <div class="hero-key-facts-strip">
+            <div class="fact-item">
+              <svg class="svg-icon fact-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Inaugurated <strong>April 2026</strong></span>
+            </div>
+            <div class="fact-sep"></div>
+            <div class="fact-item">
+              <svg class="svg-icon fact-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span><strong id="fact-students-count">480+</strong> Students</span>
+            </div>
+            <div class="fact-sep"></div>
+            <div class="fact-item">
+              <svg class="svg-icon fact-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span><strong id="fact-projects-count">14</strong> Live Projects</span>
+            </div>
+          </div>
+
+          <!-- Hero Action CTAs -->
+          <div class="hero-actions-row">
+            <button class="btn-gold-primary" onclick="openVisitModal()">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Request Lab Consultation</span>
+            </button>
+            <a href="#projects-section" class="btn-navy-outline">
+              <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Explore Projects</span>
+            </a>
+            <a href="index.html#ecosystem" class="btn-navy-outline" style="border-style:dashed;">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              <span>Back to Ecosystem</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Refined Glass-Style Tile with Soft Gold Glow -->
+        <div class="coe-hero-glass-tile">
+          <img src="Images/aiexcellence-icon.jpg" alt="Centre of Excellence Emblem" id="coe-hero-icon" loading="lazy">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION B: STICKY SUB-NAVIGATION ===== -->
+  <nav class="sticky-subnav" id="stickySubnav" aria-label="Page Sub Navigation">
+    <div class="container">
+      <div class="subnav-container">
+        <a href="#overview-section" class="subnav-link active">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Overview
+        </a>
+        <a href="#impact-section" class="subnav-link">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Impact
+        </a>
+        <a href="#projects-section" class="subnav-link">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Projects
+        </a>
+        <a href="#focus-section" class="subnav-link">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Focus Areas
+        </a>
+        <a href="#gallery-section" class="subnav-link">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Gallery
+        </a>
+        <a href="#leadership-section" class="subnav-link">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Contact &amp; Leadership
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main>
+
+    <!-- SECTION C: KEY PERFORMANCE HIGHLIGHTS -->
+    <section class="coe-section-wrap" id="overview-section">
+      <div class="container">
+        
+        <!-- Standardized Left-Aligned Section Header (Fix Bug #1) -->
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Key Performance Highlights</h2>
+          <p class="section-subtitle-text">Live institutional metrics, verified student cohort progression, and R&amp;D grants</p>
+        </div>
+
+        <div class="kpi-stats-grid">
+          <!-- Card 1 -->
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-top">
+                <span class="kpi-label">Students Trained</span>
+                <div class="kpi-icon-bubble">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+              </div>
+              <div class="kpi-val" id="m-students" data-target="480">480+</div>
+            </div>
+            <div class="kpi-badge">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+              <span>Active Industry Cohort</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-top">
+                <span class="kpi-label">Live Industry Projects</span>
+                <div class="kpi-icon-bubble">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+              </div>
+              <div class="kpi-val" id="m-projects" data-target="14">14</div>
+            </div>
+            <div class="kpi-badge">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+              <span>Active Client Sprints</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-top">
+                <span class="kpi-label">Funding &amp; Grants</span>
+                <div class="kpi-icon-bubble">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+              </div>
+              <div class="kpi-val" id="m-funding">₹25.5 L</div>
+            </div>
+            <div class="kpi-badge info">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Sponsored R&amp;D Equipment</span>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-top">
+                <span class="kpi-label">Patents &amp; Papers</span>
+                <div class="kpi-icon-bubble">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+              </div>
+              <div class="kpi-val" id="m-patents" data-target="8">8</div>
+            </div>
+            <div class="kpi-badge">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+              <span>Publications &amp; IP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row: Cumulative Growth Chart -->
+        <div class="polished-card" style="margin-bottom: 24px;">
+          <div class="chart-box-header">
+            <div>
+              <h3>Cumulative Growth &amp; Momentum</h3>
+              <p class="section-subtitle-text" style="font-size:0.88rem;">Total students trained and certified across academic quarters</p>
+            </div>
+            <span class="chart-tag-badge">Verified Institutional Cohorts</span>
+          </div>
+
+          <div style="position:relative; width:100%; height:260px;">
+            <canvas id="growthChartCanvas"></canvas>
+          </div>
+
+          <div id="milestone-pill-row" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:18px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION D: IMPACT & SKILL DISTRIBUTION -->
+    <section class="coe-section-wrap" id="impact-section" style="background:#F1F5F9; border-top:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0;">
+      <div class="container">
+        
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Specialization Tracks &amp; Career Conversion</h2>
+          <p class="section-subtitle-text">Curricular distribution and funnel progression from baseline enrollment to placement offers</p>
+        </div>
+
+        <!-- Equal Height Cards Row (Fix Bug #2) -->
+        <div class="analytics-equal-row">
+
+          <!-- Left Card: Skill Track Distribution Donut -->
+          <div class="chart-box-card">
+            <div class="chart-box-header">
+              <div>
+                <h3>Skill Track Distribution</h3>
+                <p class="section-subtitle-text" style="font-size:0.86rem;">Student specialization breakdown across core tracks</p>
+              </div>
+              <span class="chart-tag-badge">Specialization</span>
+            </div>
+
+            <!-- Vertically centered donut + legend without dead space -->
+            <div class="donut-layout-centered">
+              <div class="donut-canvas-container">
+                <canvas id="skillDonutCanvas"></canvas>
+                <div class="donut-center-info">
+                  <span class="donut-center-val" id="donutTotalVal">480</span>
+                  <span class="donut-center-lbl">Total Enrolled</span>
+                </div>
+              </div>
+
+              <div class="donut-legend-list" id="donutLegendList">
+                <!-- Dynamically populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Card: Talent Conversion Funnel -->
+          <div class="chart-box-card">
+            <div class="chart-box-header">
+              <div>
+                <h3>Talent Conversion Funnel</h3>
+                <p class="section-subtitle-text" style="font-size:0.86rem;">Progression from foundational training to corporate hiring</p>
+              </div>
+              <span class="chart-tag-badge" style="color:#059669; background:#ECFDF5; border-color:#A7F3D0;">Career Conversion</span>
+            </div>
+
+            <div class="funnel-container" id="funnelContainer">
+              <!-- Dynamically populated by JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SECTION F: IMPACT PIPELINE FLOW -->
+        <div class="polished-card" style="margin-top: 24px;">
+          <div class="chart-box-header">
+            <div>
+              <h3>Impact Pipeline Flow</h3>
+              <p class="section-subtitle-text" style="font-size:0.88rem;">End-to-end outcome mapping: Student Skill Track → Active Project Sprints → Tangible Placements</p>
+            </div>
+            <span class="chart-tag-badge" style="color:#92400E; background:var(--gold-100); border-color:#FDE68A;">Outcome Pipeline</span>
+          </div>
+
+          <div class="pipeline-grid-columns" id="pipelineFlowContainer">
+            <!-- Dynamically populated by JS with numbered columns and gold chevrons -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION E: INDUSTRY PROJECTS & DEPLOYMENTS -->
+    <section class="coe-section-wrap" id="projects-section">
+      <div class="container">
+        
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Industry Projects &amp; Deployments</h2>
+          <p class="section-subtitle-text">Active client challenges, enterprise copilot pipelines, and sponsored research sprints</p>
+        </div>
+
+        <div class="sector-project-grid" id="sectorBarsList">
+          <!-- Dynamically populated by JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION I: KEY FOCUS AREAS & INFRASTRUCTURE -->
+    <section class="coe-section-wrap" id="focus-section" style="background:#F1F5F9; border-top:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0;">
+      <div class="container">
+        
+        <!-- Standardized Left-Aligned Section Header (Fix Bug #1) -->
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Key Focus Areas &amp; Infrastructure</h2>
+          <p class="section-subtitle-text">Specialized modules, industry toolsets, and collaborative research initiatives</p>
+        </div>
+
+        <div class="focus-areas-grid" id="coe-focus-grid">
+          <!-- Dynamically populated by JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION G: ENGAGEMENT AREAS & INITIATIVES -->
+    <section class="coe-section-wrap" id="engagement-section">
+      <div class="container">
+        
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Engagement Areas &amp; Initiatives</h2>
+          <p class="section-subtitle-text">Workshops, thought leadership webinars, hackathons, and technical symposia</p>
+        </div>
+
+        <div class="engagement-cards-grid" id="coe-engagement-grid">
+          <!-- Dynamically populated by JS with SVG icons & 16:10 slots -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION H: MEDIA & PHOTO SHOWCASE -->
+    <section class="coe-section-wrap" id="gallery-section" style="background:#F1F5F9; border-top:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0;">
+      <div class="container">
+        
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Media &amp; Photo Showcase</h2>
+          <p class="section-subtitle-text">Lab infrastructure, industrial MoU ceremonies, workshops, and student demonstrations</p>
+        </div>
+
+        <div class="gallery-showcase-grid" id="coe-gallery-grid">
+          <!-- Dynamically populated by JS with photo slots and captions below -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION K-1: INDUSTRY PARTNERS LOGO STRIP -->
+    <section class="coe-section-wrap" style="padding-top:40px; padding-bottom:40px;">
+      <div class="container">
+        <div class="partners-logo-strip">
+          <div class="partners-strip-title">Corporate &amp; Industry R&amp;D Collaborators</div>
+          <div class="partners-logo-grid" id="partnersLogoGrid">
+            <div class="partner-logo-item" title="Navigate Labs">
+              <span class="partner-text-badge">NAVIGATE LABS</span>
+            </div>
+            <div class="partner-logo-item" title="Oracle">
+              <img src="Images/partners/oracle.png" alt="Oracle Logo" loading="lazy">
+            </div>
+            <div class="partner-logo-item" title="Kanini">
+              <img src="Images/partners/kanini.png" alt="Kanini Logo" loading="lazy">
+            </div>
+            <div class="partner-logo-item" title="Atheenapandian">
+              <img src="Images/partners/atheenapandian.png" alt="Atheenapandian Logo" loading="lazy">
+            </div>
+            <div class="partner-logo-item" title="Fortinet">
+              <img src="Images/partners/fortinet.png" alt="Fortinet Logo" loading="lazy">
+            </div>
+            <div class="partner-logo-item" title="Biovision">
+              <span class="partner-text-badge">BIOVISION</span>
+            </div>
+            <div class="partner-logo-item" title="Apollo Healthcare">
+              <span class="partner-text-badge">APOLLO HEALTH</span>
+            </div>
+            <div class="partner-logo-item" title="MiBot">
+              <span class="partner-text-badge">MIBOT ROBOTICS</span>
+            </div>
+            <div class="partner-logo-item" title="IPCS Global">
+              <span class="partner-text-badge">IPCS GLOBAL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION K-2: RESEARCH & IP SUMMARY -->
+    <section class="coe-section-wrap" style="padding-top:20px; padding-bottom:40px;">
+      <div class="container">
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Research Publications &amp; Intellectual Property</h2>
+          <p class="section-subtitle-text">Scholarly contributions, peer-reviewed journal papers, and proprietary technology patents</p>
+        </div>
+
+        <div class="research-ip-grid">
+          <!-- Patents Tile -->
+          <div class="research-ip-tile">
+            <div class="ip-meta-left">
+              <div class="ip-icon-square gold-theme">
+                <svg class="svg-icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              </div>
+              <div>
+                <div class="ip-number" id="ip-patents-count">8</div>
+                <div class="ip-title">Patents Published &amp; Filed</div>
+                <div class="ip-desc-sub" id="ip-patents-sub">Generative AI &amp; Vision Systems IP Rights</div>
+              </div>
+            </div>
+            <a href="javascript:void(0)" class="ip-view-all-link" onclick="openVisitModal()">
+              <span>View details</span>
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <!-- Papers Tile -->
+          <div class="research-ip-tile">
+            <div class="ip-meta-left">
+              <div class="ip-icon-square">
+                <svg class="svg-icon-lg" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <div>
+                <div class="ip-number" id="ip-papers-count">26</div>
+                <div class="ip-title">Scopus-Indexed Publications</div>
+                <div class="ip-desc-sub" id="ip-papers-sub">High-Impact Q1/Q2 Computer Science Journals</div>
+              </div>
+            </div>
+            <a href="javascript:void(0)" class="ip-view-all-link" onclick="openVisitModal()">
+              <span>View repository</span>
+              <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION J: LEADERSHIP & IN-CHARGE (Fix Bug #3) -->
+    <section class="coe-section-wrap" id="leadership-section" style="background:#F1F5F9; border-top:1px solid #E2E8F0;">
+      <div class="container">
+        
+        <div class="section-header-stack">
+          <div class="gold-accent-bar"></div>
+          <h2>Center of Excellence Leadership &amp; In-Charge</h2>
+          <p class="section-subtitle-text">Connect with designated academic leads and corporate liaisons for project consultation and MoU engagements</p>
+        </div>
+
+        <div class="leadership-dual-grid">
+
+          <!-- Left Card: Lead Faculty In-Charge Profile -->
+          <div class="lead-faculty-card">
+            <div>
+              <div class="lead-header-row">
+                <div class="lead-avatar-wrap">
+                  <div class="lead-avatar-img" id="incharge-avatar-initials">KS</div>
+                  <div class="verified-badge-icon" title="Verified Centre In-Charge">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </div>
+
+                <div class="lead-meta-text">
+                  <h3 id="incharge-name">Dr. K. Saravanan</h3>
+                  <div class="lead-designation-pill" id="incharge-designation">Professor &amp; Lead – Centre of Excellence in AI</div>
+                  <div class="lead-dept-text" id="incharge-dept">Department of CSE (Artificial Intelligence &amp; Data Science)</div>
+                </div>
+              </div>
+
+              <!-- 2x2 Contact Grid with Full-Width Location Row (Fix Bug #3: Room 402 non-breaking) -->
+              <div class="lead-contact-grid" style="margin-top:24px;">
+                <div class="lead-contact-item">
+                  <span class="contact-item-lbl">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Official Email
+                  </span>
+                  <span class="contact-item-val">
+                    <a href="mailto:coe.ai@rmp.srmist.edu.in" id="incharge-email">coe.ai@rmp.srmist.edu.in</a>
+                  </span>
+                </div>
+
+                <div class="lead-contact-item">
+                  <span class="contact-item-lbl">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    Direct Phone
+                  </span>
+                  <span class="contact-item-val">
+                    <a href="tel:+914443923120" id="incharge-phone">+91 44 4392 3120</a>
+                  </span>
+                </div>
+
+                <div class="lead-contact-item full-width">
+                  <span class="contact-item-lbl">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Cabin &amp; Lab Location
+                  </span>
+                  <!-- Non-breaking space inside Room 402 as requested in Bug #3 -->
+                  <span class="contact-item-val" id="incharge-location">Tech Park Block V, Level 4, Room&nbsp;402</span>
+                </div>
+
+                <div class="lead-contact-item full-width" style="border-top:none; padding-top:4px; margin-top:0;">
+                  <span class="contact-item-lbl">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Consultation Hours
+                  </span>
+                  <span class="contact-item-val" id="incharge-hours">Mon – Fri, 2:00 PM – 5:00 PM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Single-Line Aligned Action Buttons (Fix Bug #3: 44-48px height) -->
+            <div class="lead-actions-row">
+              <a href="mailto:coe.ai@rmp.srmist.edu.in" id="incharge-email-btn" class="action-btn-pill action-btn-primary">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span>Email In-Charge</span>
+              </a>
+
+              <button class="action-btn-pill action-btn-secondary" onclick="copyInchargeEmail()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>Copy Email</span>
+              </button>
+
+              <button class="action-btn-pill action-btn-secondary" onclick="openVisitModal()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Request Lab Consultation</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Co-Incharge & Liaison -->
+          <div class="liaison-side-panel">
+            <div>
+              <h3 class="liaison-head-title">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Faculty Coordinator &amp; Liaison</span>
+              </h3>
+
+              <div style="display:flex; flex-direction:column; gap:14px; margin-top:20px;">
+                <div class="liaison-entry-card">
+                  <div class="liaison-avatar-sm">PM</div>
+                  <div class="liaison-info">
+                    <span class="liaison-role-lbl">Co-Incharge Faculty</span>
+                    <span class="liaison-name-val" id="coincharge-name">Dr. P. Meenakshi</span>
+                    <span class="liaison-sub-desc" id="coincharge-role">Associate Professor – Deep Learning &amp; NLP</span>
+                  </div>
+                </div>
+
+                <div class="liaison-entry-card">
+                  <div class="liaison-avatar-sm" style="background:var(--gold-50); color:var(--gold-600); border-color:var(--gold-100);">RV</div>
+                  <div class="liaison-info">
+                    <span class="liaison-role-lbl">Corporate Partner Liaison</span>
+                    <span class="liaison-name-val" id="industry-spoc-name">Mr. Rajesh Varman</span>
+                    <span class="liaison-sub-desc" id="industry-spoc-role">VP Engineering, Navigate Labs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Soft Blue Info Callout (Constraint J) -->
+            <div class="academic-support-callout">
+              <svg class="svg-icon-lg info-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <div>
+                <h4>Direct Academic Support</h4>
+                <p>For urgent curriculum alignments, student project slots, or laboratory access permissions, submit a formal request via SRMIST IIC portal.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SECTION K-3: CLOSING CALL-TO-ACTION BANNER -->
+        <div class="closing-cta-banner">
+          <div class="closing-cta-text">
+            <h2 id="closing-cta-title">Collaborate with the AI Centre of Excellence</h2>
+            <p id="closing-cta-desc">Engage in joint R&amp;D grants, sponsor specialized student cohorts, or co-design industry curriculum tracks with SRMIST Ramapuram faculty.</p>
+          </div>
+          <div class="closing-cta-buttons">
+            <button class="btn-gold-primary" onclick="openVisitModal()">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Request Lab Consultation</span>
+            </button>
+            <a href="mailto:coe.ai@rmp.srmist.edu.in" class="btn-navy-outline" id="closing-email-cta">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>Email In-Charge</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== MODAL: REQUEST LAB CONSULTATION / VISIT ===== -->
+  <div class="visit-modal-backdrop" id="visitModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalHeading">
+    <div class="visit-modal">
+      <button class="modal-close-btn" onclick="closeVisitModal()" aria-label="Close dialog">
+        <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h3 id="modalHeading" style="font-size:1.35rem; color:var(--navy-900); margin-bottom:6px;">Schedule CoE Lab Consultation</h3>
+      <p style="color:var(--ink-600); font-size:0.88rem; margin-bottom:20px;">Send a formal consultation or laboratory tour appointment request directly to the Center In-Charge.</p>
+
+      <form id="consultationForm" onsubmit="handleConsultationSubmit(event)">
+        <div style="margin-bottom:14px">
+          <label for="reqName" style="display:block; font-size:0.82rem; font-weight:700; color:var(--ink-700); margin-bottom:4px;">Full Name</label>
+          <input type="text" id="reqName" required placeholder="e.g. Dr. Ramesh Kumar / Priya Sharma" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:0.92rem; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:14px">
+          <label for="reqEmail" style="display:block; font-size:0.82rem; font-weight:700; color:var(--ink-700); margin-bottom:4px;">Email Address</label>
+          <input type="email" id="reqEmail" required placeholder="name@domain.com" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:0.92rem; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:14px">
+          <label for="reqPurpose" style="display:block; font-size:0.82rem; font-weight:700; color:var(--ink-700); margin-bottom:4px;">Purpose of Inquiry</label>
+          <select id="reqPurpose" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:0.92rem; background:white; box-sizing:border-box;">
+            <option value="Student Project Mentorship">Student Project Mentorship &amp; Lab Access</option>
+            <option value="Industry MoU Collaboration">Corporate MoU &amp; Joint R&amp;D Proposal</option>
+            <option value="Internship / Hiring Drive">Student Internship &amp; Talent Scouting</option>
+            <option value="Academic Lab Tour">Official Academic Review / Lab Tour</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:20px">
+          <label for="reqNote" style="display:block; font-size:0.82rem; font-weight:700; color:var(--ink-700); margin-bottom:4px;">Preferred Date / Note</label>
+          <textarea id="reqNote" rows="3" placeholder="Provide preferred meeting timing or specific research topic..." style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:0.92rem; font-family:inherit; resize:none; box-sizing:border-box;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" class="action-btn-pill action-btn-secondary" onclick="closeVisitModal()">Cancel</button>
+          <button type="submit" class="action-btn-pill action-btn-primary">Send Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Accessible Lightbox Modal (Section H) -->
+  <div class="lightbox-modal" id="galleryLightbox" role="dialog" aria-modal="true" aria-label="Photo Lightbox">
+    <button class="lightbox-btn-close" onclick="closeLightbox()" aria-label="Close Lightbox">
+      <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="lightbox-nav-btn lightbox-prev" onclick="prevLightbox()" aria-label="Previous photo">
+      <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="lightbox-content-box">
+      <div class="lightbox-img-wrap">
+        <img id="lightboxImg" src="" alt="Enlarged gallery photo">
+      </div>
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+    <button class="lightbox-nav-btn lightbox-next" onclick="nextLightbox()" aria-label="Next photo">
+      <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="contact-toast" role="status" aria-live="polite">
+    <svg class="svg-icon-sm" style="color:var(--gold-400);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toast-msg">Email copied to clipboard!</span>
+  </div>
+
+  <!-- Floating Back to Top Button -->
+  <button id="back-to-top" aria-label="Back to top">
+    <svg class="svg-icon" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  </button>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Industry &amp; Innovation Council, SRMIST Ramapuram. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ========================================================
+       DATA CONTROLLER & INTERACTIVE ENGINE
+       Unique data, scroll-spy, Chart.js instances, count-up KPI
+       ======================================================== -->
+  <script>
+    // Rich, domain-specific data customized for EACH Center of Excellence
+    const coeData = {
+      ai: {
+        title: "AI Centre of Excellence",
+        partner: "Navigate Labs",
+        dept: "CSE – BDA / Cloud / AI",
+        desc: "Inaugurated April 2026. Specialized center for Generative AI, foundational model fine-tuning, computer vision pipelines, and intensive industry sprints for SRMIST students and faculty.",
+        icon: "Images/aiexcellence-icon.jpg",
+        students: "480+",
+        studentsRaw: 480,
+        projects: "14",
+        projectsRaw: 14,
+        funding: "₹25.5 L",
+        patents: "8",
+        patentsRaw: 8,
+        papersRaw: 26,
+        incharge: {
+          name: "Dr. K. Saravanan",
+          initials: "KS",
+          designation: "Professor & Lead – Centre of Excellence in AI",
+          dept: "Department of CSE (Artificial Intelligence & Data Science)",
+          email: "coe.ai@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3120",
+          location: "Tech Park Block V, Level 4, Room\u00A0402",
+          hours: "Mon – Fri, 2:00 PM – 5:00 PM",
+          coIncharge: "Dr. P. Meenakshi",
+          coRole: "Associate Professor – Deep Learning & NLP",
+          industrySpoc: "Mr. Rajesh Varman",
+          spocRole: "VP Engineering, Navigate Labs"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [65, 140, 230, 320, 410, 480],
+          milestones: [
+            "Navigate Labs MoU Signed",
+            "NVIDIA GPU Rig Deployed",
+            "250+ Certified in LLMs",
+            "GenAI Hackathon Grand Prize"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in AI Foundations", count: "480", pct: 100, badge: "Baseline AI Cohort", cls: "stage-1" },
+          { name: "2. Industry Certified (Navigate Labs)", count: "395", pct: 82.3, badge: "82.3% Certification Rate", cls: "stage-2" },
+          { name: "3. Built Production GenAI Models", count: "260", pct: 54.2, badge: "54.2% Sprint Completion", cls: "stage-3" },
+          { name: "4. Placed in AI / Deep Tech Roles", count: "175", pct: 36.5, badge: "36.5% Core Placement Rate", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "480",
+          labels: ["Generative AI & LLMs", "Computer Vision (YOLOv9)", "NLP & Conversational AI", "Deep Reinforcement Learning", "MLOps & Cloud Deployment"],
+          data: [38, 24, 18, 12, 8],
+          counts: ["182", "115", "86", "58", "39"],
+          colors: ["#1E64D4", "#061E4A", "#0284C7", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Enterprise Copilots & RAG", count: "4 Projects", pct: 100, partners: ["Navigate Labs", "Oracle", "Kanini"] },
+          { name: "Medical Imaging Diagnostics", count: "4 Projects", pct: 100, partners: ["Atheenapandian", "Biovision", "Apollo"] },
+          { name: "Computer Vision Defect Inspection", count: "3 Projects", pct: 75, partners: ["MiBot", "IPCS Global"] },
+          { name: "Multilingual Voice & NLP", count: "3 Projects", pct: 75, partners: ["FocusR", "Nichi-In"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "LLMs & RAG Architectures", val: "182 Students" },
+            { label: "Computer Vision & Edge", val: "115 Students" },
+            { label: "NLP & Semantic Search", val: "86 Students" },
+            { label: "MLOps & Optimization", val: "97 Students" }
+          ],
+          col2: [
+            { label: "Navigate Enterprise Copilot", val: "4 Client Sprints" },
+            { label: "Autonomous Vision Inspection", val: "3 Live Deployments" },
+            { label: "Clinical Voice Transcript AI", val: "3 Hospital Sprints" },
+            { label: "GPU Model Quantization Hub", val: "Sponsored Equipment" }
+          ],
+          col3: [
+            { label: "175 Core Placement Offers", val: "Tier-1 Tech Companies" },
+            { label: "8 Patents Published", val: "Generative AI IP" },
+            { label: "26 Scopus Research Papers", val: "Indexed Journals" },
+            { label: "₹25.5L Industry Grants", val: "Direct R&D Funding" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Executive briefings on Enterprise LLMs, Retrieval Augmented Generation, and multi-agent frameworks.", img: "Images/AIML/WhatsApp Image 2026-09-23 at 12.13.36 PM.jpeg", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A7.003 7.003 0 0 1 5.07 11H5a1 1 0 0 1 0-2h.07A7.003 7.003 0 0 1 11 3.07V3a1 1 0 0 1 2 0v.07A7.003 7.003 0 0 1 18.93 9H19a1 1 0 0 1 0 2h-.07A7.003 7.003 0 0 1 13 16.93z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Hands-on GPU bootcamps fine-tuning foundational open-weights models.", img: "Images/AIML/WhatsApp Image 2026-09-23 at 12.13.44 PM (1).jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" },
+          { title: "Innovation Awards & Sprints", badge: "Competition", desc: "Annual generative AI hackathon with corporate prizes and venture mentorship.", img: "Images/AIML/WhatsApp Image 2026-09-23 at 2.12.09 PM.jpeg", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z" },
+          { title: "Research Demonstrations", badge: "Live Demos", desc: "Interactive student prototype exhibitions with partner engineers evaluating codebases.", img: "Images/AIML/Focus R.jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" }
+        ],
+        images: [
+          { src: "Images/AIML/WhatsApp Image 2026-09-23 at 12.13.36 PM.jpeg", caption: "AI CoE Inauguration & High-Performance Compute Laboratory Setup" },
+          { src: "Images/AIML/WhatsApp Image 2026-09-23 at 12.13.44 PM (1).jpeg", caption: "Navigate Labs Senior Engineering Faculty Mentorship Session" },
+          { src: "Images/AIML/WhatsApp Image 2026-09-23 at 2.12.09 PM.jpeg", caption: "Generative AI Student Sprint & Research Demonstration Exhibition" }
+        ],
+        focus: [
+          {
+            title: "Generative AI & LLMs",
+            desc: "Training on Llama-3, Mistral, LoRA fine-tuning, vector database embeddings, and multi-agent coordination frameworks.",
+            tags: ["Llama-3", "Mistral", "LoRA", "ChromaDB", "LangChain"]
+          },
+          {
+            title: "Real-Time Industry Sprints",
+            desc: "Live project challenges and client architectures provided directly by Navigate Labs and partner engineering leads.",
+            tags: ["FastAPI", "Docker", "Triton Server", "MLOps", "Kubernetes"]
+          },
+          {
+            title: "Certified AI Specialist",
+            desc: "Rigorous 100-hour industry curriculum culminating in corporate co-branded credentials recognized across top tech firms.",
+            tags: ["PyTorch", "HuggingFace", "YOLOv9", "Weights & Biases"]
+          }
+        ],
+        partnersList: [
+          { name: "Navigate Labs", badge: "NAVIGATE LABS" },
+          { name: "Oracle", img: "Images/partners/oracle.png" },
+          { name: "Kanini", img: "Images/partners/kanini.png" },
+          { name: "Atheenapandian", img: "Images/partners/atheenapandian.png" },
+          { name: "Biovision", badge: "BIOVISION" },
+          { name: "Apollo Healthcare", badge: "APOLLO HEALTH" }
+        ],
+        ipPatentsSub: "Generative AI &amp; Vision Systems IP Rights",
+        ipPapersSub: "High-Impact Q1/Q2 Computer Science Journals",
+        closingCtaTitle: "Collaborate with the AI Centre of Excellence",
+        closingCtaDesc: "Engage in joint R&amp;D grants, sponsor specialized student cohorts, or co-design industry curriculum tracks with SRMIST Ramapuram faculty."
+      },
+
+      edge: {
+        title: "EDGE Centre of Excellence",
+        partner: "BeauRoi Technologies Pvt LTD",
+        dept: "ECE – Microelectronics & VLSI",
+        desc: "Established for electronics innovation, microchip research, IoT edge telemetry, RTOS firmware development, and enhancing global hardware manufacturing competitiveness.",
+        icon: "Images/edge-icon.png",
+        students: "385+",
+        studentsRaw: 385,
+        projects: "11",
+        projectsRaw: 11,
+        funding: "₹18.0 L",
+        patents: "5",
+        patentsRaw: 5,
+        papersRaw: 19,
+        incharge: {
+          name: "Dr. S. Radhakrishnan",
+          initials: "SR",
+          designation: "Professor & Lead – Embedded & VLSI Systems",
+          dept: "Department of Electronics & Communication Engineering",
+          email: "coe.edge@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3122",
+          location: "ECE Block II, Level 2, Room\u00A0204",
+          hours: "Tue – Thu, 2:30 PM – 5:30 PM",
+          coIncharge: "Dr. M. Anand",
+          coRole: "Associate Professor – Chip Architecture & FPGA Lab",
+          industrySpoc: "Mr. K. V. Senthil",
+          spocRole: "Director of Embedded Systems, BeauRoi Tech"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [45, 110, 190, 265, 330, 385],
+          milestones: [
+            "BeauRoi Tech MoU Inception",
+            "FPGA & Cleanroom Testbench",
+            "200th Microcontroller Certified",
+            "Smart Telemetry Patent Published"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in Embedded Systems", count: "385", pct: 100, badge: "ECE Baseline Cohort", cls: "stage-1" },
+          { name: "2. Industry Certified (BeauRoi)", count: "305", pct: 79.2, badge: "79.2% Hardware Certified", cls: "stage-2" },
+          { name: "3. Designed Functional Hardware Prototypes", count: "195", pct: 50.6, badge: "50.6% Physical Prototyping", cls: "stage-3" },
+          { name: "4. Placed in VLSI & Core Hardware", count: "128", pct: 33.2, badge: "33.2% Core VLSI Placement", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "385",
+          labels: ["VLSI & ASIC Physical Design", "IoT Edge Microcontrollers", "Firmware & Embedded C/RTOS", "RF & Antenna Circuitry", "PCB Architecture & CAD"],
+          data: [32, 28, 20, 12, 8],
+          counts: ["123", "108", "77", "46", "31"],
+          colors: ["#1E64D4", "#0284C7", "#061E4A", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Smart Telemetry & ECU Units", count: "3 Projects", pct: 100, partners: ["BeauRoi Tech", "Cyrix"] },
+          { name: "LoRaWAN Agri-Environmental Hubs", count: "3 Projects", pct: 100, partners: ["IIT Madras Incubator", "Adani"] },
+          { name: "Ultra-Low Power Wearable Monitors", count: "3 Projects", pct: 100, partners: ["Biovision", "Atheenapandian"] },
+          { name: "Industrial CAN-Bus Telematics", count: "2 Projects", pct: 67, partners: ["IPCS Global"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "VLSI & FPGA RTL Coding", val: "123 Students" },
+            { label: "IoT Edge & Microcontrollers", val: "108 Students" },
+            { label: "Embedded C & FreeRTOS", val: "77 Students" },
+            { label: "RF Circuit Design", val: "77 Students" }
+          ],
+          col2: [
+            { label: "BeauRoi Smart ECU Unit", val: "3 Client Sprints" },
+            { label: "LoRaWAN Soil Sensor Hub", val: "3 Live Deployments" },
+            { label: "Medical Telemetry Wearable", val: "3 Field Prototypes" },
+            { label: "CAN-Bus Telematics Rig", val: "Automotive Rig" }
+          ],
+          col3: [
+            { label: "128 Core Hardware Offers", val: "VLSI / Semiconductor Firms" },
+            { label: "5 Hardware Patents", val: "Microchip Innovations" },
+            { label: "19 Scopus Papers", val: "IEEE Conference Tracks" },
+            { label: "₹18.0L Equipment Grant", val: "BeauRoi Hardware Lab" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Technical seminars on VLSI chip fabrication and microelectronics verification.", img: "Images/ECE/WhatsApp Image 2026-09-23 at 1.42.13 PM.jpeg", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Hands-on microchip architecture and RTOS driver development sessions.", img: "Images/ECE/WhatsApp Image 2026-09-23 at 1.42.14 PM.jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0z" },
+          { title: "Silicon Innovation Challenge", badge: "Competition", desc: "National embedded hardware hackathon sponsored by BeauRoi Technologies.", img: "Images/ECE/WhatsApp Image 2026-09-23 at 1.57.13 PM.jpeg", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" },
+          { title: "Telemetry Demonstrations", badge: "Live Demos", desc: "Live LoRaWAN telemetry grid deployments and sensor monitoring dashboards.", img: "Images/ECE/WhatsApp Image 2026-09-23 at 1.42.13 PM.jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14z" }
+        ],
+        images: [
+          { src: "Images/ECE/WhatsApp Image 2026-09-23 at 1.42.13 PM.jpeg", caption: "EDGE Microchip & Cleanroom Research Facility" },
+          { src: "Images/ECE/WhatsApp Image 2026-09-23 at 1.42.14 PM.jpeg", caption: "BeauRoi Technologies MoU Formalization Signing" },
+          { src: "Images/ECE/WhatsApp Image 2026-09-23 at 1.57.13 PM.jpeg", caption: "Embedded IoT Hardware Workbench & FPGA Sprints" }
+        ],
+        focus: [
+          {
+            title: "Embedded Systems & VLSI",
+            desc: "Design, synthesis, and physical layout of microcontrollers and FPGA-based processing chips.",
+            tags: ["Verilog", "Xilinx Vivado", "Cadence", "FPGA", "RTOS"]
+          },
+          {
+            title: "IoT Sensor Networks",
+            desc: "Industrial sensor telemetry deployment with wireless protocols for smart manufacturing.",
+            tags: ["LoRaWAN", "BLE 5.2", "Zigbee", "CAN-Bus", "MQTT"]
+          },
+          {
+            title: "Global Semiconductor Skills",
+            desc: "Hardware training tailored specifically to meet international chip packaging standards.",
+            tags: ["IPC-A-610", "Altium Designer", "PCB Layout", "EMC Testing"]
+          }
+        ],
+        partnersList: [
+          { name: "BeauRoi Technologies", badge: "BEAUROI TECH" },
+          { name: "Intel", img: "Images/partners/intel.png" },
+          { name: "Cyrix Technologies", badge: "CYRIX TECH" },
+          { name: "XYMA Analytics", img: "Images/partners/xyma.png" },
+          { name: "MTRL", img: "Images/partners/mtrl.png" },
+          { name: "IIT Madras Incubator", badge: "IITM CELL" }
+        ],
+        ipPatentsSub: "VLSI Microarchitectures &amp; Smart Telemetry Patents",
+        ipPapersSub: "IEEE Microelectronics &amp; Embedded Systems Transactions",
+        closingCtaTitle: "Collaborate with the EDGE Centre of Excellence",
+        closingCtaDesc: "Advance semiconductor innovation, prototype custom VLSI silicon, or co-design RTOS telemetry systems with SRMIST Ramapuram faculty."
+      },
+
+      cybersecurity: {
+        title: "Cybersecurity Centre of Excellence",
+        partner: "Fortinet / Cybertracs / GUVI / HTC Global",
+        dept: "CSE – Cybersecurity & Digital Forensics",
+        desc: "Advanced operational defense lab dedicated to SOC telemetry, ethical hacking sprints, cloud zero-trust architectures, and critical infrastructure threat mitigation.",
+        icon: "Images/partners/fortinet.png",
+        students: "535+",
+        studentsRaw: 535,
+        projects: "18",
+        projectsRaw: 18,
+        funding: "₹32.0 L",
+        patents: "12",
+        patentsRaw: 12,
+        papersRaw: 34,
+        incharge: {
+          name: "Dr. R. Vasanth Kumar",
+          initials: "VK",
+          designation: "Professor & Lead – Cybersecurity Operations (CISO)",
+          dept: "Department of CSE (Cyber Security & Networks)",
+          email: "coe.cyber@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3125",
+          location: "IT Block IV, Level 3, Room\u00A0301",
+          hours: "Mon – Fri, 1:30 PM – 4:30 PM",
+          coIncharge: "Dr. A. J. Deepa",
+          coRole: "Associate Professor – Cryptography & Network Security",
+          industrySpoc: "Mr. Arunachalam S.",
+          spocRole: "Lead Technical Director, Fortinet Academy"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [85, 190, 310, 410, 480, 535],
+          milestones: [
+            "Fortinet Security Academy MoU",
+            "Live SIEM & SOC Center Activated",
+            "300+ Certified Ethical Hackers",
+            "National CTF Cyber Defense Cup"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in Cyber Defense Foundations", count: "535", pct: 100, badge: "Baseline Cyber Cohort", cls: "stage-1" },
+          { name: "2. Industry Certified (Fortinet NSE / CEH)", count: "440", pct: 82.2, badge: "82.2% Certification Rate", cls: "stage-2" },
+          { name: "3. Conducted Live SOC & Threat Audits", count: "315", pct: 58.9, badge: "58.9% Threat Lab Completion", cls: "stage-3" },
+          { name: "4. Placed in Security Engineering / SOC", count: "198", pct: 37.0, badge: "37.0% Core Cyber Placement", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "535",
+          labels: ["SOC Operations & SIEM Telemetry", "Ethical Hacking & Penetration Testing", "Zero-Trust Cloud & DevSecOps", "Digital Forensics & Incident Response", "Applied Cryptography & PKI"],
+          data: [36, 26, 18, 12, 8],
+          counts: ["193", "139", "96", "64", "43"],
+          colors: ["#061E4A", "#1E64D4", "#0284C7", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Enterprise SIEM & SOC Automation", count: "5 Projects", pct: 100, partners: ["Fortinet", "HTC Global", "Cybertracs"] },
+          { name: "Cloud Security & Zero-Trust Defense", count: "5 Projects", pct: 100, partners: ["Snowflake", "Oracle", "GUVI"] },
+          { name: "Digital Forensics & Incident Response", count: "4 Projects", pct: 80, partners: ["Cybertracs", "TN Police Cyber Cell"] },
+          { name: "Web & API Vulnerability Testing", count: "4 Projects", pct: 80, partners: ["FocusR", "Nichi-In"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "SOC & Incident Response", val: "193 Students" },
+            { label: "Penetration Testing & CTF", val: "139 Students" },
+            { label: "Zero-Trust Architecture", val: "96 Students" },
+            { label: "Cryptography & PKI", val: "107 Students" }
+          ],
+          col2: [
+            { label: "Enterprise SOC Telemetry Rig", val: "5 Live Deployments" },
+            { label: "Automated API Security Scanner", val: "4 Client Sprints" },
+            { label: "Incident Response Playbooks", val: "4 Enterprise Deployments" },
+            { label: "Fortinet Threat Intelligence Feed", val: "Live Gateway" }
+          ],
+          col3: [
+            { label: "198 Core Cyber Placements", val: "Global SOC & Security Firms" },
+            { label: "12 Patents Filed & Published", val: "Threat Defense IP" },
+            { label: "34 Scopus Research Papers", val: "IEEE Security & ACM" },
+            { label: "₹32.0L Enterprise Cyber Grants", val: "Lab & Rig Funding" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Executive briefings on Zero-Trust Architecture, ransomware mitigation, and post-quantum cryptography.", img: "Images/CS/WhatsApp Image 2026-09-23 at 2.02.52 PM.jpeg", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Hands-on Red Team vs Blue Team adversary simulations and packet inspection bootcamps.", img: "Images/CS/CYbertracs.jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0z" },
+          { title: "Cyber Defense Hackathon", badge: "Competition", desc: "24-Hour Capture The Flag (CTF) tournament with enterprise vulnerability bug bounties.", img: "Images/CS/WhatsApp Image 2026-09-23 at 2.05.47 PM.jpeg", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" },
+          { title: "Threat Lab Demonstrations", badge: "Live Demos", desc: "Live telemetry dashboard demonstration showing MITRE ATT&CK framework event mapping.", img: "Images/CS/CYbertracs.jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14z" }
+        ],
+        images: [
+          { src: "Images/CS/CYbertracs.jpeg", caption: "Cybertracs Security Operations Center & Threat Simulation Hub" },
+          { src: "Images/CS/WhatsApp Image 2026-09-23 at 2.02.52 PM.jpeg", caption: "Fortinet Academy MoU Formalization & Executive Briefing" },
+          { src: "Images/CS/WhatsApp Image 2026-09-23 at 2.05.47 PM.jpeg", caption: "Student Blue-Team Live Threat Hunting & CTF Defense Sprints" }
+        ],
+        focus: [
+          {
+            title: "SOC Operations & Threat Hunting",
+            desc: "Continuous telemetry inspection, Splunk / Elastic SIEM deployment, and automated incident triage against ransomware.",
+            tags: ["SIEM", "Splunk", "MITRE ATT&CK", "Snort", "Suricata"]
+          },
+          {
+            title: "Penetration Testing & Bug Bounties",
+            desc: "Methodical reconnaissance, web application security (OWASP Top 10), and binary exploitation in sandboxed ranges.",
+            tags: ["Kali Linux", "Metasploit", "Burp Suite Pro", "Ghidra", "Nmap"]
+          },
+          {
+            title: "Zero-Trust Cloud & DevSecOps",
+            desc: "Identity management, micro-segmentation, immutable infrastructure audit, and automated vulnerability pipeline scans.",
+            tags: ["Kubernetes Security", "Trivy", "Terraform", "OAuth2", "PKI"]
+          }
+        ],
+        partnersList: [
+          { name: "Fortinet Academy", img: "Images/partners/fortinet.png" },
+          { name: "Cybertracs", badge: "CYBERTRACS" },
+          { name: "GUVI Geek Network", badge: "GUVI" },
+          { name: "HTC Global Services", badge: "HTC GLOBAL" },
+          { name: "NASSCOM Cyber Task Force", img: "Images/partners/nasscom.png" },
+          { name: "Snowflake Security", img: "Images/partners/snowflake.png" }
+        ],
+        ipPatentsSub: "Zero-Trust Threat Defense &amp; Cryptographic Patents",
+        ipPapersSub: "IEEE S&amp;P &amp; ACM Cloud Security Transactions",
+        closingCtaTitle: "Collaborate with the Cybersecurity Centre of Excellence",
+        closingCtaDesc: "Partner on corporate vulnerability assessments, sponsor student blue/red team cohorts, or establish threat hunting testbeds with SRMIST Ramapuram faculty."
+      },
+
+      automation: {
+        title: "CoE in Automation & Robotics",
+        partner: "IPCS Global / Schneider / MiBot",
+        dept: "EEE – Control Systems & Industrial Mechatronics",
+        desc: "State-of-the-art industrial mechatronics center delivering hands-on proficiency in PLC programming, SCADA telemetry, industrial articulated arm robotics, and Industry 4.0 factory automation.",
+        icon: "Images/EEE/retech.jpeg",
+        students: "420+",
+        studentsRaw: 420,
+        projects: "15",
+        projectsRaw: 15,
+        funding: "₹22.5 L",
+        patents: "6",
+        patentsRaw: 6,
+        papersRaw: 22,
+        incharge: {
+          name: "Dr. N. Balaji",
+          initials: "NB",
+          designation: "Professor & Lead – Industrial Automation & Robotics",
+          dept: "Department of Electrical & Electronics Engineering",
+          email: "coe.automation@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3128",
+          location: "EEE Block I, Level 1, Room\u00A0102",
+          hours: "Mon – Thu, 2:00 PM – 5:00 PM",
+          coIncharge: "Dr. K. Senthil",
+          coRole: "Associate Professor – Power Electronics & Industrial Drives",
+          industrySpoc: "Mr. Praveen Kumar",
+          spocRole: "Chief Technical Officer, IPCS Global"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [55, 130, 220, 310, 375, 420],
+          milestones: [
+            "IPCS Global MoU Partnership",
+            "Schneider PLC & SCADA Rig Deployed",
+            "6-Axis Articulated Robot Arm Commissioned",
+            "Automated Packaging Cell Live"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in Industrial Automation Fundamentals", count: "420", pct: 100, badge: "Baseline EEE Cohort", cls: "stage-1" },
+          { name: "2. Certified in PLC / SCADA / Industrial Drives", count: "340", pct: 81.0, badge: "81.0% Certified Engineers", cls: "stage-2" },
+          { name: "3. Programmed Functional Factory Automation Cells", count: "225", pct: 53.6, badge: "53.6% Lab Cell Sprints", cls: "stage-3" },
+          { name: "4. Placed in Robotics & Industrial Automation", count: "142", pct: 33.8, badge: "33.8% Core Automation Placement", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "420",
+          labels: ["PLC Programming (Siemens/Allen Bradley)", "6-Axis Industrial Robotics & Kinematics", "SCADA & Industrial HMI Telemetry", "Industrial Drives & Servo Control", "Pneumatics, Hydraulics & Factory IoT"],
+          data: [35, 27, 18, 12, 8],
+          counts: ["147", "113", "76", "50", "34"],
+          colors: ["#1E64D4", "#061E4A", "#0284C7", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Pick-and-Place Robotic Packaging Cells", count: "4 Projects", pct: 100, partners: ["MiBot", "IPCS Global"] },
+          { name: "SCADA Water Treatment & Power Grid Monitoring", count: "4 Projects", pct: 100, partners: ["TNEB", "Schneider Electric"] },
+          { name: "Smart Industrial Conveyor & Sorting Stations", count: "4 Projects", pct: 100, partners: ["Retech Automation", "IPCS Global"] },
+          { name: "Factory IoT Sensor & Energy Dashboards", count: "3 Projects", pct: 75, partners: ["FocusR", "Adani"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "PLC & Ladder Logic", val: "147 Students" },
+            { label: "Industrial Robotics", val: "113 Students" },
+            { label: "SCADA & HMI Systems", val: "76 Students" },
+            { label: "Industrial Drives & Servo", val: "84 Students" }
+          ],
+          col2: [
+            { label: "Articulated Robotic Sorting Cell", val: "4 Live Stations" },
+            { label: "SCADA Remote Substation Rig", val: "4 Factory Modules" },
+            { label: "Automated Bottling Conveyor", val: "4 Industrial Rigs" },
+            { label: "High-Speed Vision Inspection Cell", val: "Multi-Axis Line" }
+          ],
+          col3: [
+            { label: "142 Core Placements", val: "Industrial Automation & Robotics OEMs" },
+            { label: "6 Mechatronics Patents", val: "Factory Automation Systems" },
+            { label: "22 Scopus Papers", val: "Control & Robotics Journals" },
+            { label: "₹22.5L Industry Grants", val: "Automation Hardware & Rigs" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Industry 4.0 paradigms, digital twins in manufacturing, and robotic process safety standards.", img: "Images/EEE/Nasscon.jpeg", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Intensive 40-hour hands-on bootcamp programming Siemens S7-1200 PLCs and KUKA robotic arms.", img: "Images/EEE/WhatsApp Image 2026-09-23 at 1.42.33 PM.jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0z" },
+          { title: "RoboInovate Factory Sprint", badge: "Competition", desc: "Student competition designing automated warehouse logistics AGVs and sorting cells.", img: "Images/EEE/WhatsApp Image 2026-09-23 at 1.42.34 PM.jpeg", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" },
+          { title: "Factory Automation Live Demos", badge: "Live Demos", desc: "Live commissioning demonstrations of synchronized multi-axis servo drives and pneumatic cylinders.", img: "Images/EEE/WhatsApp Image 2026-09-23 at 1.42.35 PM.jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14z" }
+        ],
+        images: [
+          { src: "Images/EEE/retech.jpeg", caption: "Automation & Robotics Training Testbed with Industrial Drives" },
+          { src: "Images/EEE/WhatsApp Image 2026-09-23 at 1.42.33 PM.jpeg", caption: "IPCS Global MoU Partnership & Laboratory Commissioning" },
+          { src: "Images/EEE/WhatsApp Image 2026-09-23 at 1.42.34 PM.jpeg", caption: "Students Assembling Multi-Axis Robotic Pick-and-Place Cell" }
+        ],
+        focus: [
+          {
+            title: "Industrial PLC & SCADA Systems",
+            desc: "Hands-on programming with Siemens TIA Portal, Rockwell Studio 5000, and Wonderware SCADA for plant operations.",
+            tags: ["Siemens S7-1200", "Allen-Bradley", "TIA Portal", "SCADA", "Modbus TCP"]
+          },
+          {
+            title: "Industrial Robotics & Motion Control",
+            desc: "Forward/inverse kinematics, path trajectory planning, payload optimization, and collaborative robot safety.",
+            tags: ["ROS2", "RoboDK", "Servo Drives", "Pneumatics", "PID Tuning"]
+          },
+          {
+            title: "Industry 4.0 Smart Factory IoT",
+            desc: "OPC-UA server bridging, energy monitoring telemetry, vibration predictive maintenance, and edge dashboards.",
+            tags: ["OPC-UA", "MQTT", "Node-RED", "Edge Gateway", "VFD Inverters"]
+          }
+        ],
+        partnersList: [
+          { name: "IPCS Global Automation", badge: "IPCS GLOBAL" },
+          { name: "Schneider Electric", badge: "SCHNEIDER ELECTRIC" },
+          { name: "MiBot Industrial Robotics", badge: "MIBOT ROBOTICS" },
+          { name: "Retech Industrial Automation", badge: "RETECH AUTOMATION" },
+          { name: "NASSCOM FutureSkills", img: "Images/partners/nasscom.png" },
+          { name: "TNEB Power Division", badge: "TNEB POWER" }
+        ],
+        ipPatentsSub: "Industrial Mechatronics &amp; SCADA Safety Patents",
+        ipPapersSub: "Elsevier Robotics &amp; Autonomous Systems Journals",
+        closingCtaTitle: "Collaborate with the Automation &amp; Robotics CoE",
+        closingCtaDesc: "Co-develop Industry 4.0 automation cells, test 6-axis robotic arms, or commission custom PLC telemetry testbenches with SRMIST Ramapuram faculty."
+      },
+
+      nichiin: {
+        title: "Nichi-In Software Solutions Hub",
+        partner: "Nichi-In Software Solutions Pvt Ltd",
+        dept: "Multi-Disciplinary IT – Cross-Border Cloud & Enterprise Engineering",
+        desc: "Specialized Indo-Japanese technology hub fostering international-grade software engineering, Japanese quality verification standards (V&V), cloud enterprise solutions, and bilingual engineering talent.",
+        icon: "Images/IT/Genesys_MoU_Signing_2.png",
+        students: "345+",
+        studentsRaw: 345,
+        projects: "9",
+        projectsRaw: 9,
+        funding: "₹16.0 L",
+        patents: "4",
+        patentsRaw: 4,
+        papersRaw: 18,
+        incharge: {
+          name: "Dr. T. S. Pradeep Kumar",
+          initials: "PK",
+          designation: "Professor & Lead – Indo-Japan Software Initiatives",
+          dept: "Department of Information Technology",
+          email: "coe.nichiin@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3130",
+          location: "Central Innovation Hub, Level 1, Room\u00A0105",
+          hours: "Mon – Fri, 10:00 AM – 1:00 PM",
+          coIncharge: "Ms. V. Keerthana",
+          coRole: "Assistant Professor & Bilingual Japanese Specialist (JLPT N3)",
+          industrySpoc: "Mr. Kenji Takahashi",
+          spocRole: "Executive VP, Nichi-In Software Solutions"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [40, 95, 175, 240, 295, 345],
+          milestones: [
+            "Nichi-In Software MoU Partnership",
+            "Japanese IT Standards Lab Inauguration",
+            "Bilingual Tech Cohort Batch 1 Certified",
+            "Tokyo Client Project Sprints Completed"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in Cross-Border Enterprise IT", count: "345", pct: 100, badge: "Baseline IT Cohort", cls: "stage-1" },
+          { name: "2. Certified in Enterprise Architecture & V&V", count: "285", pct: 82.6, badge: "82.6% Certification Rate", cls: "stage-2" },
+          { name: "3. Delivered International Enterprise Codebases", count: "180", pct: 52.2, badge: "52.2% Project Sprints", cls: "stage-3" },
+          { name: "4. Placed in Indo-Japan IT & Multinational Roles", count: "115", pct: 33.3, badge: "33.3% Global IT Placement", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "345",
+          labels: ["Japanese Software Quality & V&V Standards", "Cloud Native Microservices (Spring / AWS)", "Healthcare Telemedicine & DICOM Systems", "Bilingual Engineering & JLPT Technical Terminology", "Automated Enterprise Test Architecture"],
+          data: [34, 25, 20, 13, 8],
+          counts: ["117", "86", "69", "45", "28"],
+          colors: ["#1E64D4", "#061E4A", "#0284C7", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Cloud Telemedicine & DICOM EHR Platforms", count: "3 Projects", pct: 100, partners: ["Nichi-In", "Apollo", "Biovision"] },
+          { name: "Enterprise Microservice Migration", count: "2 Projects", pct: 100, partners: ["Oracle", "Kanini"] },
+          { name: "Japanese Quality V&V Compliance Testbenches", count: "2 Projects", pct: 100, partners: ["Nichi-In", "Tokyo Consortium"] },
+          { name: "Bilingual Natural Language Tools", count: "2 Projects", pct: 100, partners: ["Snowflake", "FocusR"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "Software Quality & V&V", val: "117 Students" },
+            { label: "Cloud Native Microservices", val: "86 Students" },
+            { label: "Healthcare IT Architecture", val: "69 Students" },
+            { label: "Bilingual Tech Communications", val: "73 Students" }
+          ],
+          col2: [
+            { label: "Cloud Telemedicine Gateway", val: "3 Client Releases" },
+            { label: "Distributed EHR Microservices", val: "2 Production Modules" },
+            { label: "Japanese Localization Suite", val: "2 Live Tools" },
+            { label: "Automated Regression Pipeline", val: "Enterprise Suite" }
+          ],
+          col3: [
+            { label: "115 Global IT Placement Offers", val: "Indo-Japan MNCs & Top Tier Tech" },
+            { label: "4 Enterprise Software Patents", val: "Distributed Cloud Systems" },
+            { label: "18 Scopus Research Papers", val: "Software Engineering Journals" },
+            { label: "₹16.0L Corporate Research Grants", val: "Nichi-In Sponsored Hub" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Seminars on Japanese manufacturing software standards (Monozukuri IT), rigorous code inspection, and Zero-Defect QA.", img: "Images/IT/Genesys_MoU_Group_Photo.png", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Hands-on microservice development bootcamps using Docker, Kubernetes, and enterprise Spring Boot.", img: "Images/IT/WhatsApp Image 2026-09-23 at 1.56.47 PM.jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0z" },
+          { title: "Indo-Japan Hackathon", badge: "Competition", desc: "48-Hour engineering sprint building high-availability telemedicine services for remote eldercare.", img: "Images/IT/Genesys_MoU_Signing_2.png", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" },
+          { title: "Software Quality Demonstrations", badge: "Live Demos", desc: "Live demonstration of automated end-to-end regression pipelines meeting Japanese verification standards.", img: "Images/IT/WhatsApp Image 2026-09-23 at 12.18.39 PM.jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14z" }
+        ],
+        images: [
+          { src: "Images/IT/Genesys_MoU_Signing_2.png", caption: "Nichi-In Software Solutions Corporate MoU Signing Ceremony" },
+          { src: "Images/IT/Genesys_MoU_Group_Photo.png", caption: "Indo-Japan Joint Engineering Leadership Delegation" },
+          { src: "Images/IT/WhatsApp Image 2026-09-23 at 1.56.47 PM.jpeg", caption: "Enterprise Cloud Microservice Architecture Sprint Lab" }
+        ],
+        focus: [
+          {
+            title: "Enterprise Cloud Microservices",
+            desc: "Modern scalable service-oriented architecture using Spring Cloud, gRPC, Docker, and Kubernetes orchestration.",
+            tags: ["Java Spring Boot", "gRPC", "Docker", "Kubernetes", "PostgreSQL"]
+          },
+          {
+            title: "Japanese Software Quality (V&V)",
+            desc: "Deterministic defect prevention, rigorous peer code reviews, static security analysis, and ISO/IEC 25010 compliance.",
+            tags: ["SonarQube", "JUnit 5", "Selenium", "ISO/IEC 25010", "Zero-Defect"]
+          },
+          {
+            title: "Digital Healthcare & Telemedicine",
+            desc: "Interoperable healthcare software conforming to HL7 FHIR and DICOM medical imaging transfer protocols.",
+            tags: ["HL7 FHIR", "DICOM", "RESTful API", "OAuth2", "Microservices"]
+          }
+        ],
+        partnersList: [
+          { name: "Nichi-In Software Solutions", badge: "NICHI-IN SOFTWARE" },
+          { name: "Oracle Cloud Infrastructure", img: "Images/partners/oracle.png" },
+          { name: "Kanini Software Solutions", img: "Images/partners/kanini.png" },
+          { name: "Tokyo Partner Consortium", badge: "TOKYO CONSORTIUM" },
+          { name: "Snowflake Data Cloud", img: "Images/partners/snowflake.png" },
+          { name: "NASSCOM FutureSkills Prime", img: "Images/partners/nasscom.png" }
+        ],
+        ipPatentsSub: "Distributed Telehealth &amp; Japanese Software Quality IP",
+        ipPapersSub: "International Journals on Software Reliability &amp; Cloud",
+        closingCtaTitle: "Collaborate with the Nichi-In Software Solutions Hub",
+        closingCtaDesc: "Engage in bilateral Indo-Japan enterprise projects, deploy bilingual engineering cohorts, or benchmark cloud software quality with SRMIST Ramapuram faculty."
+      },
+
+      structural: {
+        title: "Structural Engineering Research Lab",
+        partner: "DST Govt of India / CSIR-SERC / L&T / Adani",
+        dept: "Civil Engineering – Advanced Materials & Mechanics",
+        desc: "High-impact research facility backed by Department of Science & Technology (DST), Govt. of India. Pioneers in low-carbon geopolymer concrete, non-destructive testing, dynamic seismic assessment, and sustainable infrastructure.",
+        icon: "Images/civil/Adani.jpeg",
+        students: "295+",
+        studentsRaw: 295,
+        projects: "16",
+        projectsRaw: 16,
+        funding: "₹53.09 L",
+        patents: "14",
+        patentsRaw: 14,
+        papersRaw: 38,
+        incharge: {
+          name: "Dr. P. Ramanathan",
+          initials: "PR",
+          designation: "Professor & Research Director – Structural Mechanics",
+          dept: "Department of Civil Engineering",
+          email: "coe.civil@rmp.srmist.edu.in",
+          phone: "+91 44 4392 3135",
+          location: "Civil Mechanics Complex, Level 1, Room\u00A0101",
+          hours: "Mon – Fri, 9:30 AM – 1:00 PM",
+          coIncharge: "Dr. L. Swaminathan",
+          coRole: "Associate Professor – Sustainable Construction Materials",
+          industrySpoc: "Dr. K. G. Rajagopal",
+          spocRole: "Scientist 'G', Department of Science & Technology (DST)"
+        },
+        growth: {
+          labels: ['2024 Q1', '2024 Q3', '2025 Q1', '2025 Q3', '2026 Q1', '2026 Q3'],
+          data: [35, 80, 140, 195, 250, 295],
+          milestones: [
+            "DST Major Research Grant (₹53.09 L) Sanctioned",
+            "Universal Testing Machine & NDT Lab Commissioned",
+            "Patented Low-Carbon Geopolymer Mix Formulated",
+            "National Smart City Structural Audit Completed"
+          ]
+        },
+        funnel: [
+          { name: "1. Enrolled in Advanced Structural & Materials Mechanics", count: "295", pct: 100, badge: "Civil Baseline Cohort", cls: "stage-1" },
+          { name: "2. Certified in NDT, FEA & Sustainable Concrete", count: "245", pct: 83.1, badge: "83.1% Certified Researchers", cls: "stage-2" },
+          { name: "3. Conducted Laboratory Testing & Field Audits", count: "168", pct: 56.9, badge: "56.9% Experimental Cohort", cls: "stage-3" },
+          { name: "4. Placed in Infrastructure Giants / R&D Labs", count: "104", pct: 35.3, badge: "35.3% Core Infra Placement", cls: "stage-4", highlight: true }
+        ],
+        skills: {
+          total: "295",
+          labels: ["Low-Carbon Geopolymer & Eco-Concrete", "FEA Structural Modeling (ANSYS / ETABS)", "Non-Destructive Testing (NDT Ultrasonic)", "Prestressed Concrete & Retrofitting", "Structural Health Monitoring & Sensors"],
+          data: [38, 24, 18, 12, 8],
+          counts: ["112", "71", "53", "35", "24"],
+          colors: ["#061E4A", "#1E64D4", "#0284C7", "#D97706", "#10B981"]
+        },
+        sectors: [
+          { name: "Eco-Concrete from Industrial By-Products", count: "5 Projects", pct: 100, partners: ["DST Govt of India", "Adani Infra"] },
+          { name: "Structural Health Monitoring for Flyovers", count: "4 Projects", pct: 100, partners: ["L&T Infra", "CSIR-SERC"] },
+          { name: "Seismic Vulnerability Assessment & FEA", count: "4 Projects", pct: 100, partners: ["Tukosice", "XYMA"] },
+          { name: "Advanced Composite Retrofitting of Aging Bridges", count: "3 Projects", pct: 75, partners: ["CSIR-SERC", "NHAI"] }
+        ],
+        pipeline: {
+          col1: [
+            { label: "Sustainable Concrete Chemistry", val: "112 Students" },
+            { label: "ANSYS & ETABS Structural FEA", val: "71 Students" },
+            { label: "Ultrasonic & NDT Field Testing", val: "53 Students" },
+            { label: "Smart Vibration Sensors", val: "59 Students" }
+          ],
+          col2: [
+            { label: "DST Geopolymer Pilot Plant", val: "Live Formulation Rig" },
+            { label: "Sensorized Bridge Health Testbed", val: "4 Field Modules" },
+            { label: "1000 kN Universal Testing Machine", val: "Heavy Structural Rig" },
+            { label: "Seismic Shake Table Simulator", val: "Dynamic Test Cell" }
+          ],
+          col3: [
+            { label: "104 Core Infrastructure Placements", val: "L&T, Shapoorji, CSIR" },
+            { label: "14 Green Concrete Patents", val: "Sustainable Materials IP" },
+            { label: "38 Scopus Q1 Research Papers", val: "High-Impact Materials Journals" },
+            { label: "₹53.09L DST Govt Grants", val: "Principal Investigator Funding" }
+          ]
+        },
+        engagement: [
+          { title: "Thought Leadership", badge: "Webinar", desc: "Symposia on Net-Zero concrete formulations, carbon capture aggregates, and seismic resilience.", img: "Images/civil/WhatsApp Image 2026-09-23 at 12.03.24 PM (2).jpeg", iconPath: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" },
+          { title: "Capacity Building Workshops", badge: "Workshop", desc: "Hands-on certification in ultrasonic pulse velocity (UPV), rebound hammer NDT, and ANSYS FEA simulation.", img: "Images/civil/WhatsApp Image 2026-09-23 at 12.03.24 PM.jpeg", iconPath: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0z" },
+          { title: "Concrete Innovation Challenge", badge: "Competition", desc: "National student competition prototyping high-strength eco-concrete using fly ash and slag.", img: "Images/civil/Adani.jpeg", iconPath: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" },
+          { title: "Structural Lab Demonstrations", badge: "Live Demos", desc: "Live compression failure demonstrations of fiber-reinforced concrete beams on the 1000 kN UTM.", img: "Images/civil/WhatsApp Image 2026-09-23 at 12.03.24 PM (3).jpeg", iconPath: "M2 3h6a4 4 0 0 1 4 4v14z" }
+        ],
+        images: [
+          { src: "Images/civil/Adani.jpeg", caption: "Advanced Heavy Structural Testing & Universal Mechanics Facility" },
+          { src: "Images/civil/WhatsApp Image 2026-09-23 at 12.03.24 PM (2).jpeg", caption: "DST Sponsored Geopolymer Concrete Experimental Research Cell" },
+          { src: "Images/civil/WhatsApp Image 2026-09-23 at 12.03.24 PM (3).jpeg", caption: "Non-Destructive Testing (NDT) & Ultrasonic Pulse Velocity Testbench" }
+        ],
+        focus: [
+          {
+            title: "Sustainable Geopolymer Materials",
+            desc: "Replacement of Portland cement with industrial fly ash and slag, drastically reducing the embodied carbon footprint.",
+            tags: ["Fly Ash", "GGBS", "Alkali Activation", "Carbon Cure", "Eco-Concrete"]
+          },
+          {
+            title: "Computational FEA & Seismic Engineering",
+            desc: "Full-scale nonlinear dynamic analysis of multi-story frames and bridge piers under seismic ground accelerations.",
+            tags: ["ANSYS", "ETABS", "STAAD.Pro", "Seismic FEA", "Modal Analysis"]
+          },
+          {
+            title: "Non-Destructive Testing (NDT) & Health Monitoring",
+            desc: "Evaluation of in-situ compressive strength, rebar corrosion mapping, and piezoelectric vibration sensors.",
+            tags: ["Ultrasonic Pulse", "Rebound Hammer", "Corrosion Mapping", "Piezo Sensors", "NDT"]
+          }
+        ],
+        partnersList: [
+          { name: "DST Govt of India", badge: "DST GOVT OF INDIA" },
+          { name: "CSIR-SERC", badge: "CSIR-SERC" },
+          { name: "L&T Construction & Infra", badge: "L&T INFRA" },
+          { name: "Adani Infrastructure", badge: "ADANI INFRA" },
+          { name: "XYMA Ultrasonic Sensors", img: "Images/partners/xyma.png" },
+          { name: "Tukosice Structural Labs", img: "Images/partners/tukosice.png" }
+        ],
+        ipPatentsSub: "Geopolymer Concrete &amp; Dynamic Seismic Patents",
+        ipPapersSub: "ACI Materials &amp; Structural Engineering Q1 Journals",
+        closingCtaTitle: "Collaborate with the Structural Engineering Research Lab",
+        closingCtaDesc: "Commission non-destructive structural audits, co-sponsor DST-funded sustainable materials research, or perform seismic FEA simulations with SRMIST Ramapuram faculty."
+      }
+    };
+
+    let growthChartInstance = null;
+    let skillDonutInstance = null;
+    let currentGalleryPhotos = [];
+    let currentLightboxIdx = 0;
+
+    // Load specific CoE details based on URL ID
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const coeId = urlParams.get('id') || 'ai';
+      const data = coeData[coeId] || coeData.ai;
+
+      // 1. Render Hero Header
+      document.getElementById('coe-title').innerText = data.title;
+      document.getElementById('coe-partner-name').innerText = data.partner;
+      document.getElementById('coe-dept-name').innerText = data.dept;
+      document.getElementById('coe-description').innerText = data.desc;
+      document.getElementById('coe-hero-icon').src = data.icon;
+      document.getElementById('hero-breadcrumb-current').innerText = data.title;
+      document.title = `${data.title} | SRMIST Ramapuram`;
+
+      // 2. Render Key Facts
+      document.getElementById('fact-students-count').innerText = data.students;
+      document.getElementById('fact-projects-count').innerText = data.projects;
+
+      // 3. Render Metrics & Count-up Targets
+      const mStudents = document.getElementById('m-students');
+      mStudents.innerText = data.students;
+      mStudents.setAttribute('data-target', data.studentsRaw || 480);
+
+      const mProjects = document.getElementById('m-projects');
+      mProjects.innerText = data.projects;
+      mProjects.setAttribute('data-target', data.projectsRaw || 14);
+
+      document.getElementById('m-funding').innerText = data.funding;
+
+      const mPatents = document.getElementById('m-patents');
+      mPatents.innerText = data.patents;
+      mPatents.setAttribute('data-target', data.patentsRaw || 8);
+
+      // Render Research & IP counts and subtitles
+      if (document.getElementById('ip-patents-count')) {
+        document.getElementById('ip-patents-count').innerText = data.patentsRaw || 8;
+      }
+      if (document.getElementById('ip-papers-count')) {
+        document.getElementById('ip-papers-count').innerText = data.papersRaw || 26;
+      }
+      if (document.getElementById('ip-patents-sub') && data.ipPatentsSub) {
+        document.getElementById('ip-patents-sub').innerHTML = data.ipPatentsSub;
+      }
+      if (document.getElementById('ip-papers-sub') && data.ipPapersSub) {
+        document.getElementById('ip-papers-sub').innerHTML = data.ipPapersSub;
+      }
+
+      // Render Closing CTA Banner text
+      if (document.getElementById('closing-cta-title')) {
+        document.getElementById('closing-cta-title').innerText = data.closingCtaTitle || `Collaborate with ${data.title}`;
+      }
+      if (document.getElementById('closing-cta-desc')) {
+        document.getElementById('closing-cta-desc').innerText = data.closingCtaDesc || `Engage in joint R&D grants, sponsor specialized student cohorts, or co-design industry curriculum tracks with SRMIST Ramapuram faculty.`;
+      }
+
+      // Render Dynamic Partners Strip
+      const partnersContainer = document.getElementById('partnersLogoGrid');
+      if (partnersContainer && data.partnersList) {
+        partnersContainer.innerHTML = data.partnersList.map(p => {
+          if (p.img) {
+            return `<div class="partner-logo-item" title="${p.name}"><img src="${p.img}" alt="${p.name} Logo" loading="lazy"></div>`;
+          } else {
+            return `<div class="partner-logo-item" title="${p.name}"><span class="partner-text-badge">${p.badge || p.name.toUpperCase()}</span></div>`;
+          }
+        }).join('');
+      }
+
+      // 4. Render Leadership & In-Charge (with Room 402 non-breaking space as required by Bug #3)
+      if (data.incharge) {
+        document.getElementById('incharge-name').innerText = data.incharge.name;
+        document.getElementById('incharge-avatar-initials').innerText = data.incharge.initials;
+        document.getElementById('incharge-designation').innerText = data.incharge.designation;
+        document.getElementById('incharge-dept').innerText = data.incharge.dept;
+        document.getElementById('incharge-email').innerText = data.incharge.email;
+        document.getElementById('incharge-email').href = `mailto:${data.incharge.email}`;
+        document.getElementById('incharge-phone').innerText = data.incharge.phone;
+        document.getElementById('incharge-phone').href = `tel:${data.incharge.phone.replace(/[^0-9+]/g, '')}`;
+        document.getElementById('incharge-location').innerHTML = data.incharge.location;
+        document.getElementById('incharge-hours').innerText = data.incharge.hours;
+        document.getElementById('incharge-email-btn').href = `mailto:${data.incharge.email}?subject=Inquiry%20regarding%20${encodeURIComponent(data.title)}`;
+        if (document.getElementById('closing-email-cta')) {
+          document.getElementById('closing-email-cta').href = `mailto:${data.incharge.email}?subject=Collaboration%20with%20${encodeURIComponent(data.title)}`;
+        }
+
+        // Co-Incharge & Liaison
+        document.getElementById('coincharge-name').innerText = data.incharge.coIncharge;
+        document.getElementById('coincharge-role').innerText = data.incharge.coRole;
+        document.getElementById('industry-spoc-name').innerText = data.incharge.industrySpoc;
+        document.getElementById('industry-spoc-role').innerText = data.incharge.spocRole;
+      }
+
+      // 5. Initialize Charts
+      initGrowthChart(data.growth, data.title);
+      renderFunnel(data.funnel);
+      initSkillDonut(data.skills);
+      renderSectorProjects(data.sectors);
+      renderPipeline(data.pipeline);
+
+      // 6. Render Focus Areas with Tech Chips (Section I)
+      const focusContainer = document.getElementById('coe-focus-grid');
+      if (focusContainer && data.focus) {
+        focusContainer.innerHTML = data.focus.map(f => `
+          <div class="focus-area-card">
+            <div>
+              <div class="focus-area-head">
+                <div class="focus-icon-box">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <h3>${f.title}</h3>
+              </div>
+              <p>${f.desc}</p>
+            </div>
+            <div class="focus-tech-chips">
+              ${(f.tags || []).map(t => `<span class="tech-tag-chip">${t}</span>`).join('')}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 7. Render Engagement Cards with SVG Icons & 16:10 Photo Slot (Section G)
+      const engagementContainer = document.getElementById('coe-engagement-grid');
+      if (engagementContainer && data.engagement) {
+        engagementContainer.innerHTML = data.engagement.map(item => `
+          <div class="engagement-item-card">
+            <div class="engagement-img-slot">
+              <img src="${item.img}" alt="${item.title}" loading="lazy">
+              <div class="engagement-badge-overlay">${item.badge}</div>
+            </div>
+            <div class="engagement-card-body">
+              <div>
+                <div class="engagement-card-top-row">
+                  <div class="engagement-card-icon">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="${item.iconPath || 'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z'}"/></svg>
+                  </div>
+                  <div class="engagement-card-title">${item.title}</div>
+                </div>
+                <p class="engagement-card-desc" style="margin-top:8px;">${item.desc}</p>
+              </div>
+              <a href="javascript:void(0)" class="engagement-learn-more" onclick="openVisitModal()">
+                <span>Learn more</span>
+                <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 8. Render Gallery with Captions Below & Lightbox trigger (Section H)
+      currentGalleryPhotos = data.images || [];
+      const galleryContainer = document.getElementById('coe-gallery-grid');
+      if (galleryContainer && currentGalleryPhotos.length > 0) {
+        galleryContainer.innerHTML = currentGalleryPhotos.map((img, i) => `
+          <div class="gallery-photo-card" onclick="openLightbox(${i})" role="button" tabindex="0" onkeydown="if(event.key==='Enter') openLightbox(${i})">
+            <div class="gallery-img-container">
+              <img src="${img.src}" alt="${img.caption}" loading="lazy">
+            </div>
+            <div class="gallery-caption-bar">
+              <svg class="svg-icon-sm" style="color:var(--gold-600);" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>${img.caption}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 9. Initialize Sticky Scroll-Spy & Count-Up Animation
+      initScrollSpy();
+      initCountUpAnimation();
+      initBackToTopButton();
+    });
+
+    // --- Interactive Chart 1: Growth Area Chart ---
+    function initGrowthChart(growthData, title) {
+      const ctx = document.getElementById('growthChartCanvas').getContext('2d');
+      if (growthChartInstance) {
+        growthChartInstance.destroy();
+      }
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+      gradient.addColorStop(0, 'rgba(30, 100, 212, 0.35)');
+      gradient.addColorStop(0.7, 'rgba(30, 100, 212, 0.06)');
+      gradient.addColorStop(1, 'rgba(30, 100, 212, 0.0)');
+
+      growthChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: growthData.labels,
+          datasets: [{
+            label: 'Certified Students',
+            data: growthData.data,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: '#1E64D4',
+            borderWidth: 3,
+            tension: 0.35,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: '#061E4A',
+            pointBorderWidth: 2.5,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointHoverBackgroundColor: '#F5C518',
+            pointHoverBorderColor: '#FFFFFF',
+            pointHoverBorderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#061E4A',
+              titleColor: '#F8FAFC',
+              bodyColor: '#FCD34D',
+              padding: 12,
+              cornerRadius: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return `Students Trained: ${context.parsed.y}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }
+            },
+            y: {
+              grid: { color: '#F1F5F9' },
+              ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }
+            }
+          }
+        }
+      });
+
+      // Render Milestone pills with SVG pin icons
+      const pillRow = document.getElementById('milestone-pill-row');
+      if (pillRow && growthData.milestones) {
+        pillRow.innerHTML = growthData.milestones.map(m => `
+          <span style="background:var(--blue-50); color:var(--blue-600); border:1px solid var(--blue-100); padding:4px 12px; border-radius:50px; font-size:0.75rem; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${m}
+          </span>
+        `).join('');
+      }
+    }
+
+    // --- Interactive Funnel ---
+    function renderFunnel(funnelStages) {
+      const container = document.getElementById('funnelContainer');
+      if (!container || !funnelStages) return;
+
+      container.innerHTML = funnelStages.map(stage => `
+        <div class="funnel-stage-card" title="Click to view details" onclick="showStageDetails('${stage.name}', '${stage.count}', '${stage.badge}')" role="button" tabindex="0">
+          <div class="funnel-stage-info">
+            <span>${stage.name}</span>
+            <span class="funnel-stage-val">${stage.count} (${stage.pct}%)</span>
+          </div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill ${stage.cls}" style="width: ${stage.pct}%;"></div>
+          </div>
+          <div class="funnel-conversion-badge ${stage.highlight ? 'highlight' : ''}">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>${stage.badge}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showStageDetails(name, count, badge) {
+      showToast(`${name}: ${count} candidates (${badge})`);
+    }
+
+    // --- Interactive Chart 3: Skill Track Donut Chart ---
+    function initSkillDonut(skills) {
+      const ctx = document.getElementById('skillDonutCanvas').getContext('2d');
+      if (skillDonutInstance) {
+        skillDonutInstance.destroy();
+      }
+
+      document.getElementById('donutTotalVal').innerText = skills.total;
+
+      skillDonutInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: skills.labels,
+          datasets: [{
+            data: skills.data,
+            backgroundColor: skills.colors,
+            borderWidth: 2,
+            borderColor: '#FFFFFF',
+            spacing: 2, // Gaps between segments as requested
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#061E4A',
+              titleColor: '#FFFFFF',
+              bodyColor: '#FCD34D',
+              padding: 10,
+              cornerRadius: 8,
+              callbacks: {
+                label: function(context) {
+                  const idx = context.dataIndex;
+                  return `${skills.labels[idx]}: ${skills.data[idx]}% (${skills.counts[idx]} students)`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Render custom interactive legend aligned right
+      const legendContainer = document.getElementById('donutLegendList');
+      if (legendContainer) {
+        legendContainer.innerHTML = skills.labels.map((lbl, i) => `
+          <div class="legend-item" onmouseenter="highlightDonutSegment(${i})" onmouseleave="resetDonutSegment()" role="button" tabindex="0">
+            <span class="legend-dot" style="background: ${skills.colors[i]};"></span>
+            <div class="legend-text-row">
+              <span class="legend-title">${lbl}</span>
+              <span class="legend-val">${skills.data[i]}% (${skills.counts[i]})</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function highlightDonutSegment(index) {
+      if (skillDonutInstance) {
+        skillDonutInstance.setActiveElements([{ datasetIndex: 0, index: index }]);
+        skillDonutInstance.update();
+      }
+    }
+
+    function resetDonutSegment() {
+      if (skillDonutInstance) {
+        skillDonutInstance.setActiveElements([]);
+        skillDonutInstance.update();
+      }
+    }
+
+    // --- Sector Projects & Deployments (Section E) ---
+    function renderSectorProjects(sectors) {
+      const container = document.getElementById('sectorBarsList');
+      if (!container || !sectors) return;
+
+      container.innerHTML = sectors.map(sec => `
+        <div class="sector-project-card">
+          <div>
+            <div class="sector-project-head">
+              <div class="sector-title-group">
+                <div class="sector-icon-box">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="sector-project-title">${sec.name}</div>
+              </div>
+              <span class="sector-sprint-badge">${sec.count}</span>
+            </div>
+
+            <div style="margin-top:12px;">
+              <div class="sector-share-label">
+                <span>Engagement intensity</span>
+                <span>${sec.pct}% of domain capacity</span>
+              </div>
+              <div class="sector-track-clean">
+                <div class="fill" style="width: ${sec.pct}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="partner-chips-row">
+            ${sec.partners.map(p => `
+              <span class="partner-chip">
+                <svg class="svg-icon-sm" style="color:var(--gold-600);" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                ${p}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- Pipeline Flow (Section F: Numbered headers & gold chevrons) ---
+    function renderPipeline(pipe) {
+      const container = document.getElementById('pipelineFlowContainer');
+      if (!container || !pipe) return;
+
+      container.innerHTML = `
+        <!-- Column 1 -->
+        <div class="pipeline-col-wrap pipeline-col-1">
+          <div class="pipeline-col-header">
+            <span class="col-num-badge">1</span>
+            <span>Skill Specialization</span>
+          </div>
+          ${pipe.col1.map(s => `
+            <div class="pipeline-node-card">
+              <span class="pipeline-node-label">${s.label}</span>
+              <span class="pipeline-node-val">${s.val}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="pipeline-chevron-connector">
+          <svg class="svg-icon-lg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="pipeline-col-wrap pipeline-col-2">
+          <div class="pipeline-col-header">
+            <span class="col-num-badge">2</span>
+            <span>Live Project Sprints</span>
+          </div>
+          ${pipe.col2.map(p => `
+            <div class="pipeline-node-card">
+              <span class="pipeline-node-label">${p.label}</span>
+              <span class="pipeline-node-val">${p.val}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="pipeline-chevron-connector">
+          <svg class="svg-icon-lg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="pipeline-col-wrap pipeline-col-3">
+          <div class="pipeline-col-header">
+            <span class="col-num-badge">3</span>
+            <span>Tangible Outcomes</span>
+          </div>
+          ${pipe.col3.map(o => `
+            <div class="pipeline-node-card">
+              <span class="pipeline-node-label">${o.label}</span>
+              <span class="pipeline-node-val">${o.val}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // --- Count-Up Animation (KPIs Section C, triggered once on scroll into view) ---
+    let countUpDone = false;
+    function initCountUpAnimation() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !countUpDone) {
+            countUpDone = true;
+            animateNumbers();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+
+      const overviewSection = document.getElementById('overview-section');
+      if (overviewSection) observer.observe(overviewSection);
+    }
+
+    function animateNumbers() {
+      const counters = [
+        { id: 'm-students', end: 480, suffix: '+' },
+        { id: 'm-projects', end: 14, suffix: '' },
+        { id: 'm-patents', end: 8, suffix: '' }
+      ];
+
+      counters.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+        const target = parseInt(el.getAttribute('data-target')) || item.end;
+        let start = 0;
+        const duration = 1200;
+        const stepTime = 25;
+        const steps = duration / stepTime;
+        const increment = target / steps;
+
+        const timer = setInterval(() => {
+          start += increment;
+          if (start >= target) {
+            el.innerText = `${target}${item.suffix}`;
+            clearInterval(timer);
+          } else {
+            el.innerText = `${Math.floor(start)}${item.suffix}`;
+          }
+        }, stepTime);
+      });
+    }
+
+    // --- Sticky Scroll-Spy Navigation ---
+    function initScrollSpy() {
+      const sections = document.querySelectorAll('section[id], div[id="leadership-section"]');
+      const navLinks = document.querySelectorAll('.subnav-link');
+
+      window.addEventListener('scroll', () => {
+        let currentId = '';
+        sections.forEach(sec => {
+          const sectionTop = sec.offsetTop - 150;
+          const sectionHeight = sec.offsetHeight;
+          if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+            currentId = sec.getAttribute('id');
+          }
+        });
+
+        if (currentId) {
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentId}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }
+
+    // --- Floating Back to Top Button ---
+    function initBackToTopButton() {
+      const btn = document.getElementById('back-to-top');
+      if (!btn) return;
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+      });
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // --- Accessible Lightbox (Section H) ---
+    function openLightbox(index) {
+      if (!currentGalleryPhotos || !currentGalleryPhotos[index]) return;
+      currentLightboxIdx = index;
+      const modal = document.getElementById('galleryLightbox');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      img.src = currentGalleryPhotos[index].src;
+      cap.innerText = currentGalleryPhotos[index].caption;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleLightboxKeys);
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('galleryLightbox');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleLightboxKeys);
+    }
+
+    function prevLightbox() {
+      if (currentGalleryPhotos.length === 0) return;
+      currentLightboxIdx = (currentLightboxIdx - 1 + currentGalleryPhotos.length) % currentGalleryPhotos.length;
+      updateLightboxDisplay();
+    }
+
+    function nextLightbox() {
+      if (currentGalleryPhotos.length === 0) return;
+      currentLightboxIdx = (currentLightboxIdx + 1) % currentGalleryPhotos.length;
+      updateLightboxDisplay();
+    }
+
+    function updateLightboxDisplay() {
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      img.src = currentGalleryPhotos[currentLightboxIdx].src;
+      cap.innerText = currentGalleryPhotos[currentLightboxIdx].caption;
+    }
+
+    function handleLightboxKeys(e) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevLightbox();
+      if (e.key === 'ArrowRight') nextLightbox();
+    }
+
+    // --- Clipboard & Modal Actions ---
+    function copyInchargeEmail() {
+      const email = document.getElementById('incharge-email').innerText;
+      navigator.clipboard.writeText(email).then(() => {
+        showToast(`Copied "${email}" to clipboard!`);
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('contact-toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    function openVisitModal() {
+      document.getElementById('visitModalBackdrop').classList.add('open');
+      document.getElementById('reqName').focus();
+    }
+
+    function closeVisitModal() {
+      document.getElementById('visitModalBackdrop').classList.remove('open');
+    }
+
+    function handleConsultationSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reqName').value;
+      closeVisitModal();
+      showToast(`Consultation request received for ${name}! In-Charge notified.`);
+      e.target.reset();
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
