@@ -4718,12 +4718,12 @@
         </div>
       </div>
 
-      <!-- Centre of Excellence Gallery Section -->
+      <!-- Gallery & Media Section -->
       <div style="border:1px solid var(--bdr);border-radius:12px;padding:20px;background:white;margin-bottom:24px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
           <div>
             <div style="font-size:12px;font-weight:800;color:var(--primary);letter-spacing:0.5px;display:flex;align-items:center;gap:6px">
-              🏛️ CENTRE OF EXCELLENCE GALLERY &amp; MEDIA
+              🏛️ GALLERY &amp; MEDIA
             </div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px">
               ${m.coe_name ? `<strong>${escapeHtml(m.coe_name)}</strong> · ${escapeHtml(m.coe_status || 'Operational')}` : (isCoE ? 'Centre of Excellence Lab Facilities' : 'Campus CoE, Labs &amp; MoU Signing Media')}
@@ -4736,7 +4736,7 @@
                 📂 Open Photos Drive Folder
               </a>` : ''}
             <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--primary-dim);color:var(--primary);border:1px solid var(--primary-glow);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;">
-              <span>📸</span> + Add CoE Photo
+              <span>📸</span> + Add Photo
               <input type="file" accept="image/*" style="display:none" onchange="uploadCoePhoto(${m.id}, this)">
             </label>
           </div>
