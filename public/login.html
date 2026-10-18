@@ -6,133 +6,89 @@
   <title>Executive Portal — Chairperson Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
     :root {
-      --bg-dark: #070b14;
-      --card-bg: rgba(15, 23, 42, 0.72);
-      --card-border: rgba(255, 255, 255, 0.12);
-      --card-border-focus: rgba(99, 102, 241, 0.6);
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --gold: #f59e0b;
-      --gold-light: #fef3c7;
-      --gold-dark: #b45309;
-      --txt-white: #ffffff;
-      --txt-muted: #94a3b8;
-      --txt-sub: #cbd5e1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-border-hover: #cbd5e1;
+      --txt-title: #0f172a;
+      --txt-body: #334155;
+      --txt-muted: #64748b;
+      --txt-sub: #94a3b8;
+      --primary: #0f172a;
+      --primary-hover: #1e293b;
+      --accent: #4f46e5;
+      --accent-subtle: #eef2ff;
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --input-focus: #0f172a;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-txt: #991b1b;
+      --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 20px 30px -10px rgba(15, 23, 42, 0.04);
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
     }
 
     body {
       min-height: 100vh;
-      background-color: var(--bg-dark);
+      background-color: var(--bg);
       background-image: 
-        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.22) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(217, 119, 6, 0.18) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(30, 27, 75, 0.4) 0%, transparent 70%);
+        radial-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 24px 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Ambient Decorative Rings */
-    .bg-blur-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .orb-1 {
-      width: 420px;
-      height: 420px;
-      background: rgba(79, 70, 229, 0.18);
-      top: -80px;
-      left: -80px;
-    }
-    .orb-2 {
-      width: 380px;
-      height: 380px;
-      background: rgba(245, 158, 11, 0.14);
-      bottom: -60px;
-      right: -60px;
+      padding: 32px 16px;
+      color: var(--txt-body);
     }
 
     .main-wrapper {
-      position: relative;
-      z-index: 1;
       width: 100%;
-      max-width: 460px;
+      max-width: 440px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Header Brand */
+    /* Minimalist Insignia Emblem */
     .portal-emblem {
-      width: 68px;
-      height: 68px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 
-        0 12px 28px rgba(79, 70, 229, 0.35),
-        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
-      position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 24px;
+      color: #0f172a;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .portal-emblem:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 16px 36px rgba(79, 70, 229, 0.45);
-    }
-    .emblem-icon {
-      font-size: 30px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-    }
-    .emblem-crown {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: linear-gradient(135deg, #fbbf24, #d97706);
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.4);
-      border: 2px solid var(--bg-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.12);
     }
 
-    /* Card Container */
+    /* Minimalist Card */
     .login-card {
       width: 100%;
       background: var(--card-bg);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 38px 34px;
-      box-shadow: 
-        0 24px 50px -12px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
-      position: relative;
+      border-radius: 18px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-card);
     }
 
     .card-header {
@@ -142,46 +98,65 @@
     .badge-executive {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #fbbf24;
+      gap: 5px;
+      padding: 3px 10px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #475569;
       font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
+      font-weight: 600;
       text-transform: uppercase;
-      border-radius: 20px;
+      letter-spacing: 0.6px;
+      border-radius: 999px;
       margin-bottom: 12px;
     }
+    .badge-executive svg {
+      width: 12px;
+      height: 12px;
+      color: var(--accent);
+    }
+
     .card-title {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--txt-white);
-      letter-spacing: -0.4px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--txt-title);
+      letter-spacing: -0.025em;
       margin-bottom: 6px;
     }
     .card-subtitle {
       font-size: 13px;
+      line-height: 1.5;
       color: var(--txt-muted);
-      line-height: 1.45;
     }
 
-    /* Form Inputs */
-    .form-group {
+    /* Error Message */
+    .error-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-txt);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 500;
       margin-bottom: 20px;
-      position: relative;
+    }
+
+    /* Form Layout */
+    .form-group {
+      margin-bottom: 18px;
     }
     .form-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: block;
       font-size: 12px;
       font-weight: 600;
-      color: var(--txt-sub);
-      margin-bottom: 8px;
-      letter-spacing: 0.2px;
+      color: var(--txt-body);
+      margin-bottom: 7px;
+      letter-spacing: -0.01em;
     }
+
     .input-wrapper {
       position: relative;
       display: flex;
@@ -190,299 +165,319 @@
     .input-icon {
       position: absolute;
       left: 14px;
-      color: #64748b;
-      font-size: 15px;
-      pointer-events: none;
-      transition: color 0.2s ease;
-    }
-    .form-input {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 12px 14px 12px 42px;
-      font-size: 14px;
-      color: var(--txt-white);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-    .form-input::placeholder {
-      color: #475569;
-    }
-    .form-input:focus {
-      border-color: var(--primary);
-      background: rgba(30, 41, 59, 0.7);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-    }
-    .form-input:focus ~ .input-icon {
-      color: var(--primary);
-    }
-    .toggle-pwd {
-      position: absolute;
-      right: 14px;
-      cursor: pointer;
-      color: #64748b;
-      font-size: 15px;
-      background: none;
-      border: none;
+      color: var(--txt-sub);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: color 0.2s;
+      pointer-events: none;
     }
-    .toggle-pwd:hover {
+    .form-input {
+      width: 100%;
+      height: 44px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      padding: 0 40px 0 40px;
+      font-size: 13.5px;
+      color: var(--txt-title);
+      font-weight: 500;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    .form-input::placeholder {
       color: var(--txt-sub);
+      font-weight: 400;
+    }
+    .form-input:hover {
+      border-color: var(--card-border-hover);
+      background: #ffffff;
+    }
+    .form-input:focus {
+      background: #ffffff;
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
     }
 
-    /* Remember & Security */
+    .toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--txt-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.15s ease;
+    }
+    .toggle-pwd:hover {
+      color: var(--txt-title);
+    }
+
+    /* Form Extras */
     .form-extra {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-top: 14px;
       margin-bottom: 22px;
-      font-size: 12px;
-      color: var(--txt-muted);
     }
     .remember-label {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 7px;
+      font-size: 12.5px;
+      color: var(--txt-muted);
       cursor: pointer;
       user-select: none;
     }
     .remember-label input[type="checkbox"] {
-      accent-color: var(--primary);
       width: 15px;
       height: 15px;
-      border-radius: 4px;
+      accent-color: var(--primary);
       cursor: pointer;
+      border-radius: 4px;
     }
     .secure-badge {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 4px;
-      color: #10b981;
-      font-weight: 600;
-      font-size: 11px;
+      font-size: 11.5px;
+      color: #059669;
+      font-weight: 500;
     }
 
     /* Primary Submit Button */
     .btn-submit {
       width: 100%;
-      padding: 14px 20px;
-      border-radius: 14px;
-      border: none;
-      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #4338ca 100%);
+      height: 44px;
+      background: var(--primary);
       color: #ffffff;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.38);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+      transition: all 0.15s ease;
     }
     .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 26px rgba(79, 70, 229, 0.5);
-      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 50%, #3730a3 100%);
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      transform: translateY(-0.5px);
     }
     .btn-submit:active {
-      transform: translateY(0);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+      transform: translateY(0.5px);
+      box-shadow: var(--shadow-sm);
     }
     .btn-submit:disabled {
-      opacity: 0.65;
-      pointer-events: none;
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    /* Error Banner */
-    .error-banner {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 600;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 18px;
-      animation: fadeIn 0.2s ease;
-    }
-
-    /* Chairperson Quick Access Box */
-    .quick-access-sec {
-      margin-top: 26px;
-      padding-top: 22px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.12);
-    }
-    .qa-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--txt-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .qa-card {
-      background: linear-gradient(135deg, rgba(254, 243, 199, 0.06) 0%, rgba(217, 119, 6, 0.04) 100%);
-      border: 1px solid rgba(245, 158, 11, 0.22);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    .qa-card:hover {
-      background: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.45);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.15);
-    }
-    .qa-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .qa-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #f59e0b, #b45309);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(180, 83, 9, 0.35);
-      flex-shrink: 0;
-    }
-    .qa-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fef3c7;
-      line-height: 1.2;
-    }
-    .qa-role {
-      font-size: 11px;
-      color: #fde68a;
-      opacity: 0.8;
-      margin-top: 2px;
-    }
-    .qa-btn-pill {
-      font-size: 11px;
-      font-weight: 700;
-      color: #fbbf24;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      padding: 4px 10px;
-      border-radius: 20px;
-      transition: background 0.2s;
-    }
-    .qa-card:hover .qa-btn-pill {
-      background: #f59e0b;
-      color: #78350f;
-    }
-
-    /* Footer text */
-    .portal-footer {
-      margin-top: 28px;
-      text-align: center;
-      font-size: 11px;
-      color: #64748b;
-      line-height: 1.6;
-    }
-    .portal-footer span {
-      color: #94a3b8;
-    }
-
-    /* Spinner Animation */
     .spinner {
-      width: 18px;
-      height: 18px;
+      display: none;
+      width: 16px;
+      height: 16px;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-top-color: #ffffff;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: none;
+      animation: spin 0.6s linear infinite;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    /* Minimalist Quick Access Section */
+    .quick-access-sec {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .qa-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .qa-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--txt-sub);
+    }
+    .qa-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #10b981;
+    }
+    .qa-status-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+
+    .qa-card {
+      background: #f8fafc;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .qa-card:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      transform: translateY(-0.5px);
+    }
+    .qa-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qa-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--txt-title);
+    }
+    .qa-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--txt-title);
+      letter-spacing: -0.01em;
+    }
+    .qa-role {
+      font-size: 11px;
+      color: var(--txt-muted);
+    }
+    .qa-btn-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--txt-title);
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      padding: 5px 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .qa-card:hover .qa-btn-pill {
+      border-color: #94a3b8;
+    }
+
+    /* Footer */
+    .portal-footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--txt-sub);
+      line-height: 1.6;
+    }
+    .portal-footer a {
+      color: var(--txt-muted);
+      text-decoration: none;
+    }
+    .portal-footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient blur lights -->
-  <div class="bg-blur-orb orb-1"></div>
-  <div class="bg-blur-orb orb-2"></div>
-
   <div class="main-wrapper">
 
     <!-- Top Insignia Emblem -->
     <div class="portal-emblem">
-      <span class="emblem-icon">🏛️</span>
-      <div class="emblem-crown">★</div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 21h18"/>
+        <path d="M4 18h16"/>
+        <path d="M6 18v-7"/>
+        <path d="M10 18v-7"/>
+        <path d="M14 18v-7"/>
+        <path d="M18 18v-7"/>
+        <polygon points="12 2 20 7 4 7"/>
+      </svg>
     </div>
 
     <!-- Login Card -->
     <div class="login-card">
 
       <div class="card-header">
-        <div class="badge-executive">Executive Portal</div>
-        <h1 class="card-title">Chairperson Sign In</h1>
-        <p class="card-subtitle">Strategic institutional intelligence, MoU pipeline, and executive decision registers</p>
+        <div class="badge-executive">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          Executive Portal
+        </div>
+        <h1 class="card-title">Sign in to your account</h1>
+        <p class="card-subtitle">Official MoU intelligence pipeline and executive decision register</p>
       </div>
 
       <!-- Error Message Box -->
       <div id="loginError" class="error-banner">
-        <span>⚠️</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
         <span id="loginErrorText">Invalid credentials.</span>
       </div>
 
       <!-- Sign In Form -->
       <form id="loginForm">
         <div class="form-group">
-          <label class="form-label" for="email">
-            <span>Executive Email Address</span>
-          </label>
+          <label class="form-label" for="email">Email address</label>
           <div class="input-wrapper">
-            <span class="input-icon">✉️</span>
+            <span class="input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </span>
             <input 
               type="email" 
               id="email" 
               class="form-input" 
               required 
-              placeholder="chairperson@college.edu" 
+              placeholder="name@college.edu" 
               autocomplete="email"
             />
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="password">
-            <span>Access Key / Password</span>
-          </label>
+          <label class="form-label" for="password">Password</label>
           <div class="input-wrapper">
-            <span class="input-icon">🔑</span>
+            <span class="input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
             <input 
               type="password" 
               id="password" 
@@ -491,8 +486,11 @@
               placeholder="••••••••" 
               autocomplete="current-password"
             />
-            <button type="button" class="toggle-pwd" id="togglePwd" title="Show/Hide Password">
-              👁️
+            <button type="button" class="toggle-pwd" id="togglePwd" title="Show or hide password">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -500,34 +498,50 @@
         <div class="form-extra">
           <label class="remember-label">
             <input type="checkbox" id="rememberMe" checked />
-            <span>Keep me logged in</span>
+            <span>Remember me for 30 days</span>
           </label>
           <span class="secure-badge">
-            <span>🛡️</span> 256-Bit SSL
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            SSL Secured
           </span>
         </div>
 
         <button type="submit" class="btn-submit" id="btnSubmit">
-          <span id="btnText">Access Executive Portal &rarr;</span>
+          <span id="btnText">Continue to Executive Portal &rarr;</span>
           <div class="spinner" id="btnSpinner"></div>
         </button>
       </form>
 
       <!-- Exclusive Chairperson Quick Access -->
       <div class="quick-access-sec">
-        <div class="qa-label">
-          <span>Official Executive Access</span>
-          <span style="color:#10b981;font-weight:700;">● Active</span>
+        <div class="qa-header">
+          <span class="qa-label">Quick Executive Access</span>
+          <span class="qa-status">
+            <span class="qa-status-dot"></span>
+            Verified
+          </span>
         </div>
         <div class="qa-card" onclick="fillChairpersonLogin()" title="1-Click Fill Chairperson Credentials">
           <div class="qa-left">
-            <div class="qa-avatar">🏛️</div>
+            <div class="qa-avatar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
             <div>
               <div class="qa-name">DR. R. ShivaKumar</div>
               <div class="qa-role">Chairman &amp; Executive Director</div>
             </div>
           </div>
-          <div class="qa-btn-pill">Fill Credentials &rarr;</div>
+          <div class="qa-btn-pill">
+            Auto Fill
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -535,8 +549,8 @@
 
     <!-- Institutional Footer -->
     <div class="portal-footer">
-      University Directorate of Industry Relations &amp; Institutional MoUs<br>
-      <span>Confidential &amp; Proprietary Executive Intelligence</span>
+      Directorate of Industry Relations &amp; Institutional MoUs<br>
+      Confidential &bull; Institutional Access Only
     </div>
 
   </div>
@@ -546,21 +560,23 @@
     // Password toggle
     const pwdInput = document.getElementById('password');
     const toggleBtn = document.getElementById('togglePwd');
+    const eyeIcon = document.getElementById('eyeIcon');
     toggleBtn.addEventListener('click', () => {
       const isPwd = pwdInput.type === 'password';
       pwdInput.type = isPwd ? 'text' : 'password';
-      toggleBtn.textContent = isPwd ? '🙈' : '👁️';
+      eyeIcon.innerHTML = isPwd 
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
     });
 
-    // 1-Click Fill for Chairperson only
+    // 1-Click Fill for Chairperson
     function fillChairpersonLogin() {
       document.getElementById('email').value = 'chairperson@college.edu';
       document.getElementById('password').value = 'Chair@123';
       document.getElementById('password').type = 'password';
-      toggleBtn.textContent = '👁️';
+      eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
       document.getElementById('loginError').style.display = 'none';
       
-      // Highlight the submit button to encourage immediate sign in
       const btn = document.getElementById('btnSubmit');
       btn.focus();
     }
@@ -581,7 +597,7 @@
 
       errDiv.style.display = 'none';
       btn.disabled = true;
-      btnText.textContent = 'Verifying Credentials...';
+      btnText.textContent = 'Verifying credentials...';
       spinner.style.display = 'inline-block';
 
       const email = document.getElementById('email').value.trim();
@@ -590,8 +606,7 @@
       try {
         const res = await apiRequest('/auth/login', 'POST', { email, password });
         if (res && res.success) {
-          btnText.textContent = 'Opening Executive Portal...';
-          // Always redirect straight to Chairperson Portal
+          btnText.textContent = 'Opening portal...';
           window.location.href = '/chairperson';
         } else {
           throw new Error(res.message || 'Authentication failed.');
@@ -600,7 +615,7 @@
         errText.textContent = err.message || 'Invalid email or password.';
         errDiv.style.display = 'flex';
         btn.disabled = false;
-        btnText.textContent = 'Access Executive Portal →';
+        btnText.textContent = 'Continue to Executive Portal →';
         spinner.style.display = 'none';
       }
     });
