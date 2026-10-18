@@ -2,12 +2,22 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadsDir = process.env.UPLOAD_PATH || path.join(__dirname, '../../uploads');
+let uploadsDir = process.env.UPLOAD_PATH;
+if (process.env.VERCEL) {
+  uploadsDir = path.join('/tmp', 'uploads');
+} else if (!uploadsDir) {
+  uploadsDir = path.join(__dirname, '../../uploads');
+}
+
 const imagesDir = path.join(uploadsDir, 'images');
 const docsDir = path.join(uploadsDir, 'documents');
 
-if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
-if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+try {
+  if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
+  if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+} catch (e) {
+  console.warn('[Upload Storage Init Notice]:', e.message);
+}
 
 // Image storage config
 const imageStorage = multer.diskStorage({

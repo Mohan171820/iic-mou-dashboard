@@ -36,7 +36,8 @@ app.use('/api/auth/login', loginLimiter);
 
 // Static file serving
 app.use(express.static(path.join(__dirname, '../public')));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+const uploadsStaticDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, '../uploads');
+app.use('/uploads', express.static(uploadsStaticDir));
 
 // Health & Diagnostics Check
 app.get('/api/health', (req, res) => {
