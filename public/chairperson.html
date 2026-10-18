@@ -3760,15 +3760,11 @@
       const dg = document.getElementById('deptGrid');
       if (!dg) return;
       dg.innerHTML = depts.map(d => {
-        const spoc = d.faculty_spoc || d.hod_name;
-        const hasSpoc = spoc && spoc.trim() !== '' && spoc.trim().toUpperCase() !== 'N/A' && spoc.trim().toLowerCase() !== 'null' && spoc.trim() !== '-';
-        const spocHtml = hasSpoc ? `<div class="dc-hod" title="${spoc.replace(/\n/g, ', ')}">Faculty SPOC: <span style="font-weight:700;color:var(--txt)">${spoc.replace(/\n/g, ', ')}</span></div>` : '';
         return `
       <div class="dc" style="--dc-color:${d.color}" onclick="openDov(${d.id})">
         <div class="dc-top">
           <div>
             <div class="dc-name">${d.name}</div>
-            ${spocHtml}
           </div>
           <div class="mring">${miniRing(d.avg_percent || 0, d.color)}<div class="mring-ctr">${Math.round(d.avg_percent || 0)}%</div></div>
         </div>
@@ -4295,10 +4291,6 @@
                   <span style="font-weight:700;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${deptName}">${deptName}</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px">
-                  <span style="color:var(--muted);width:70px;flex-shrink:0;font-size:11px">SPOC:</span>
-                  <span style="font-weight:600;color:var(--txt-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${m.faculty_spoc || 'N/A'}">${m.faculty_spoc || '—'}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px">
                   <span style="color:var(--muted);width:70px;flex-shrink:0;font-size:11px">Status:</span>
                   <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};font-size:10px;padding:2px 8px;">${m.status}</span>
                 </div>
@@ -4508,13 +4500,6 @@
             Official Media &amp; Photos:
           </span>
           ${renderSocialBadges(m)}
-        </div>
-
-        <div class="mou-meta">
-          <span>Owner: <strong style="color:var(--txt)">${m.owner_name || 'Unassigned'}</strong></span>
-          <span>Health: <strong style="color:${m.health === 'Good' ? 'var(--green)' : m.health === 'At Risk' ? 'var(--amber)' : 'var(--red)'}">${m.health}</strong></span>
-          <span>Stage: <strong style="color:var(--txt)">${m.days_in_stage !== null ? m.days_in_stage + 'd' : '-'}</strong></span>
-          <span>Docs: <strong style="color:var(--txt)">${m.document_count || 0}</strong></span>
         </div>
         ${m.purpose ? `<div class="mou-purpose">${m.purpose}</div>` : ''}
         <div class="expand-hint">View commitments, meetings, CoE gallery &amp; timeline &rarr;</div>
