@@ -2861,12 +2861,22 @@
         updateChairmanCounts();
       }
 
-      // Defensive unification: ensure IT is merged into Information Technology
+      // Defensive unification: ensure canonical departments and filter out zero-count departments
       if (depts && depts.departments) {
         const unifiedMap = new Map();
         for (const d of depts.departments) {
-          const isIT = d.name.trim().toUpperCase() === 'IT' || d.name.trim().toLowerCase() === 'information technology';
-          const key = isIT ? 'Information Technology' : d.name.trim();
+          let key = (d.name || '').trim();
+          if (/^it$/i.test(key) || /^information technology$/i.test(key)) {
+            key = 'Information Technology';
+          } else if (/^mech/i.test(key)) {
+            key = 'Mech';
+          } else if (/^biotechnology/i.test(key)) {
+            key = 'Biotechnology';
+          } else if (/^bda/i.test(key)) {
+            key = 'BDA & CC';
+          } else if (/^iot/i.test(key)) {
+            key = 'IOT & CSBS';
+          }
           if (!unifiedMap.has(key)) {
             unifiedMap.set(key, { ...d, name: key });
           } else {
@@ -2885,7 +2895,9 @@
             if (!existing.hod_name && d.hod_name) existing.hod_name = d.hod_name;
           }
         }
-        depts.departments = Array.from(unifiedMap.values()).sort((a, b) => b.avg_percent - a.avg_percent);
+        depts.departments = Array.from(unifiedMap.values())
+          .filter(d => (d.total_mous || 0) > 0)
+          .sort((a, b) => b.avg_percent - a.avg_percent || b.total_mous - a.total_mous);
       }
 
       const ctrPct = document.getElementById('ctrPct');
@@ -3755,10 +3767,11 @@
     function renderLegend(depts) {
       const lb = document.getElementById('legendBox');
       if (!lb) return;
-      lb.innerHTML = depts.map(d => `
+      const validDepts = (depts || []).filter(d => (d.total_mous || 0) > 0);
+      lb.innerHTML = validDepts.map(d => `
       <div class="leg-item" onclick="openDov(${d.id})">
         <div class="leg-dot" style="background:${d.color}"></div>
-        <div class="leg-name">${d.name}</div>
+        <div class="leg-name">${escapeHtml(d.name)}</div>
         <div class="leg-bar-w"><div class="leg-bar" style="width:${d.avg_percent || 0}%;background:${d.color}"></div></div>
         <div class="leg-pct" style="color:${d.color}">${Math.round(d.avg_percent || 0)}%</div>
       </div>`).join('');
@@ -3768,12 +3781,13 @@
     function renderDeptCards(depts) {
       const dg = document.getElementById('deptGrid');
       if (!dg) return;
-      dg.innerHTML = depts.map(d => {
+      const validDepts = (depts || []).filter(d => (d.total_mous || 0) > 0);
+      dg.innerHTML = validDepts.map(d => {
         return `
       <div class="dc" style="--dc-color:${d.color}" onclick="openDov(${d.id})">
         <div class="dc-top">
           <div>
-            <div class="dc-name">${d.name}</div>
+            <div class="dc-name">${escapeHtml(d.name)}</div>
           </div>
           <div class="mring">${miniRing(d.avg_percent || 0, d.color)}<div class="mring-ctr">${Math.round(d.avg_percent || 0)}%</div></div>
         </div>

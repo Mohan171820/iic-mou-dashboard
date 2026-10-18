@@ -168,14 +168,25 @@ exports.getDepartmentProgress = (req, res) => {
       FROM departments d
       LEFT JOIN mous m ON d.id = m.department_id AND m.is_deleted = 0
       GROUP BY d.id
+      HAVING COUNT(m.id) > 0
       ORDER BY avg_percent DESC, d.name ASC
     `).all();
 
-    // Ensure IT and Information Technology are unified under Information Technology
+    // Canonical department unification
     const deptsMap = new Map();
     for (const d of rawDepts) {
-      const isIT = d.name.trim().toUpperCase() === 'IT' || d.name.trim().toLowerCase() === 'information technology';
-      const key = isIT ? 'Information Technology' : d.name.trim();
+      let key = d.name.trim();
+      if (/^it$/i.test(key) || /^information technology$/i.test(key)) {
+        key = 'Information Technology';
+      } else if (/^mech/i.test(key)) {
+        key = 'Mech';
+      } else if (/^biotechnology/i.test(key)) {
+        key = 'Biotechnology';
+      } else if (/^bda/i.test(key)) {
+        key = 'BDA & CC';
+      } else if (/^iot/i.test(key)) {
+        key = 'IOT & CSBS';
+      }
       if (!deptsMap.has(key)) {
         deptsMap.set(key, { ...d, name: key });
       } else {
@@ -194,7 +205,9 @@ exports.getDepartmentProgress = (req, res) => {
         if (!existing.hod_name && d.hod_name) existing.hod_name = d.hod_name;
       }
     }
-    const depts = Array.from(deptsMap.values()).sort((a, b) => b.avg_percent - a.avg_percent);
+    const depts = Array.from(deptsMap.values())
+      .filter(d => (d.total_mous || 0) > 0)
+      .sort((a, b) => b.avg_percent - a.avg_percent || b.total_mous - a.total_mous);
 
     res.json({ success: true, departments: depts });
   } catch (err) {

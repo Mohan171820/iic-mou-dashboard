@@ -191,14 +191,26 @@ function processExcelWorkbook(workbook) {
         if (!compName) continue;
 
         let deptName = (getField(row, 'Lead_Department', 'Lead Department', 'Department', 'Branch') || 'General').trim();
+        const alignedDepts = getField(row, 'Aligned_Departments', 'Aligned Departments', 'Aligned_Branches', 'Aligned Branches') || '';
+        const facSpoc = getField(row, 'Faculty_SPOC', 'Faculty SPOC', 'Faculty_Spoc', 'SPOC', 'Faculty Coordinator', 'Faculty Incharge');
+
         if (/^it$/i.test(deptName) || /^information technology$/i.test(deptName)) {
           deptName = 'Information Technology';
-        } else if (/^mech$/i.test(deptName) || /^mechanical/i.test(deptName)) {
+        } else if (/^mech/i.test(deptName)) {
           deptName = 'Mech';
-        } else if (/^biotechnology$/i.test(deptName)) {
+        } else if (/^biotechnology/i.test(deptName)) {
           deptName = 'Biotechnology';
+        } else if (/^bda/i.test(deptName)) {
+          deptName = 'BDA & CC';
+        } else if (/^iot/i.test(deptName)) {
+          deptName = 'IOT & CSBS';
+        } else if (/^cs\s*&\s*gt$/i.test(deptName) || /^cs&gt$/i.test(deptName)) {
+          if (alignedDepts.toLowerCase().includes('gaming') || (facSpoc && facSpoc.includes('Balika'))) {
+            deptName = 'Gaming Technology';
+          } else {
+            deptName = 'Cybersecurity';
+          }
         }
-        const facSpoc = getField(row, 'Faculty_SPOC', 'Faculty SPOC', 'Faculty_Spoc', 'SPOC', 'Faculty Coordinator', 'Faculty Incharge');
 
         insertDept.run(deptName, facSpoc || null);
         if (facSpoc) {
@@ -247,7 +259,6 @@ function processExcelWorkbook(workbook) {
         const plcAy = parseInt(getField(row, 'Placements_AY', 'Placements AY', 'Placements')) || 0;
         const jtRes = getField(row, 'Joint_Research_Papers', 'Joint_Research_', 'Joint Research', 'Joint_Research') || null;
         const spFund = parseFloat(getField(row, 'Sponsored_Funding_INR', 'Sponsored Funding INR', 'Sponsored Funding')) || 0;
-        const alignedDepts = getField(row, 'Aligned_Departments', 'Aligned Departments', 'Aligned_Branches', 'Aligned Branches') || null;
         const activitiesLog = getField(row, 'Yearly_Activities_Log', 'Yearly Activities Log', 'Purpose', 'Activities') || '';
 
         // If stage is 5 or 6 or CoE details are present
@@ -303,6 +314,7 @@ function processExcelWorkbook(workbook) {
       const idList = Array.from(processedMouIds).join(',');
       db.prepare(`UPDATE mous SET is_deleted = 1 WHERE id NOT IN (${idList})`).run();
       db.prepare(`UPDATE mous SET is_deleted = 0 WHERE id IN (${idList})`).run();
+      db.prepare('DELETE FROM departments WHERE id NOT IN (SELECT DISTINCT department_id FROM mous WHERE is_deleted = 0)').run();
     }
   })();
 
