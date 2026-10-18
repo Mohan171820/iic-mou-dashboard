@@ -38,6 +38,28 @@ app.use('/api/auth/login', loginLimiter);
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Health & Diagnostics Check
+app.get('/api/health', (req, res) => {
+  try {
+    const db = require('./db/database');
+    const userCount = db.prepare('SELECT count(*) as count FROM users').get().count;
+    const mouCount = db.prepare('SELECT count(*) as count FROM mous WHERE is_deleted = 0').get().count;
+    res.json({
+      status: 'ok',
+      environment: process.env.NODE_ENV || 'production',
+      isVercel: !!process.env.VERCEL,
+      usersInDb: userCount,
+      activeMousInDb: mouCount
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+      stack: err.stack
+    });
+  }
+});
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));

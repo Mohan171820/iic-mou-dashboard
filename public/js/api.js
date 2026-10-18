@@ -34,9 +34,16 @@ async function apiRequest(endpoint, method = 'GET', body = null, isFormData = fa
       return null;
     }
 
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      throw new Error(text && text.length < 200 ? text : `Server Error (HTTP ${res.status}). Please check server logs.`);
+    }
+
     if (!res.ok) {
-      throw new Error(data.message || `Request failed with status ${res.status}`);
+      throw new Error(data.message || data.error || `Request failed with status ${res.status}`);
     }
 
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())) {
