@@ -36,8 +36,12 @@ app.use('/api/auth/login', loginLimiter);
 
 // Static file serving
 app.use(express.static(path.join(__dirname, '../public')));
-const uploadsStaticDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, '../uploads');
-app.use('/uploads', express.static(uploadsStaticDir));
+// Static uploads serving (bundled uploads, public mirror, and /tmp)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+if (process.env.VERCEL) {
+  app.use('/uploads', express.static(path.join('/tmp', 'uploads')));
+}
 
 // Health & Diagnostics Check
 app.get('/api/health', (req, res) => {
