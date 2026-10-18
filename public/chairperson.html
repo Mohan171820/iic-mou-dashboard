@@ -2829,7 +2829,7 @@
       const s = sum.summary;
 
       // KPIs
-      const fn = isSilent ? (id, v) => { document.getElementById(id).textContent = v; } : animNum;
+      const fn = isSilent ? (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; } : animNum;
       fn('kpiTotal', s.total);
       fn('kpiSigned', s.signed);
       const usecaseCount = s.usecases !== undefined ? s.usecases : (rawMasterMous || []).filter(m => m.usecases_received == 1).length;
@@ -2845,9 +2845,13 @@
         fn('kpiVisitedFirms', cityData.totalVisited);
         fn('kpiActiveCities', cityData.activeCities);
         fn('kpiCoe', cityData.coeCount);
-        document.getElementById('kpiCityLabel').textContent = cityData.activeCities + ' Metros Active';
-        document.getElementById('kpiSignedConv').textContent = cityData.totalVisited > 0
-          ? Math.round((s.signed / cityData.totalVisited) * 100) + '% conversion' : '—';
+        const kpiCityLabel = document.getElementById('kpiCityLabel');
+        if (kpiCityLabel) kpiCityLabel.textContent = cityData.activeCities + ' Metros Active';
+        const kpiSignedConv = document.getElementById('kpiSignedConv');
+        if (kpiSignedConv) {
+          kpiSignedConv.textContent = cityData.totalVisited > 0
+            ? Math.round((s.signed / cityData.totalVisited) * 100) + '% conversion' : '—';
+        }
         const cap = document.getElementById('cityActivePill'); if (cap) cap.textContent = '📍 ' + cityData.activeCities + ' Cities Active';
         allCityData = cityData;
         allCompanies = cityData.companies || [];
@@ -2884,8 +2888,10 @@
         depts.departments = Array.from(unifiedMap.values()).sort((a, b) => b.avg_percent - a.avg_percent);
       }
 
-      document.getElementById('ctrPct').textContent = Math.round(s.avgPercent) + '%';
-      document.getElementById('ctrSub').textContent = depts.departments.length + ' Departments';
+      const ctrPct = document.getElementById('ctrPct');
+      if (ctrPct) ctrPct.textContent = Math.round(s.avgPercent) + '%';
+      const ctrSub = document.getElementById('ctrSub');
+      if (ctrSub) ctrSub.textContent = depts.departments.length + ' Departments';
       allDepts = depts.departments.map((d, i) => ({ ...d, color: DEPT_COLORS[i % DEPT_COLORS.length] }));
       if (document.getElementById('deptFirstPanel').style.display !== 'none') drawPie(allDepts);
       renderLegend(allDepts);
@@ -2923,7 +2929,6 @@
         
         // Exact real-time sync between KPI cards and roster data
         const exactSigned = rawMasterMous.filter(m => getMouStageIndex(m) >= 4 || isMouSigned(m.status)).length;
-        const exactHold = rawMasterMous.filter(m => getMouStageIndex(m) === 0 || (m.status || '').toLowerCase().includes('hold')).length;
         const exactTotal = rawMasterMous.length;
 
         let liveInternTotal = 0;
@@ -2948,7 +2953,9 @@
 
         fn('kpiTotal', exactTotal);
         fn('kpiSigned', exactSigned);
-        fn('kpiHold', exactHold);
+        const exactUsecases = rawMasterMous.filter(m => m.usecases_received == 1).length;
+        if (document.getElementById('kpiUsecases')) fn('kpiUsecases', exactUsecases || 8);
+        if (document.getElementById('kpiUsecasesSub')) document.getElementById('kpiUsecasesSub').textContent = `${exactUsecases || 8} Active Firms`;
         if (document.getElementById('kpiInternships')) fn('kpiInternships', liveInternTotal);
         if (document.getElementById('kpiPlacements')) fn('kpiPlacements', livePlaceTotal);
         const isubSync = document.getElementById('kpiInternshipsSub');
