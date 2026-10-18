@@ -166,8 +166,8 @@ function processExcelWorkbook(workbook) {
   const updateInd = db.prepare(`UPDATE industries SET sector = ?, address = ?, contact_person = ?, email = ? WHERE id = ?`);
 
   const getMou = db.prepare(`SELECT id, progress_percent, insta_url, linkedin_url, drive_link, chairman_visit, stage_index FROM mous WHERE industry_id = ? AND department_id = ?`);
-  const insertMou = db.prepare(`INSERT INTO mous (industry_id, department_id, title, status, progress_percent, purpose, mou_date, validity_years, first_visit_date, followup_date, mou_draft_date, coe_status, coe_name, internships_ay, placements_ay, joint_research, sponsored_funding_inr, aligned_branches, faculty_spoc, insta_url, linkedin_url, drive_link, chairman_visit, stage_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-  const updateMou = db.prepare(`UPDATE mous SET status = ?, progress_percent = ?, purpose = ?, mou_date = ?, validity_years = ?, first_visit_date = ?, followup_date = ?, mou_draft_date = ?, coe_status = ?, coe_name = ?, internships_ay = ?, placements_ay = ?, joint_research = ?, sponsored_funding_inr = ?, aligned_branches = ?, faculty_spoc = ?, insta_url = ?, linkedin_url = ?, drive_link = ?, chairman_visit = ?, stage_index = ? WHERE id = ?`);
+  const insertMou = db.prepare(`INSERT INTO mous (industry_id, department_id, title, status, progress_percent, purpose, mou_date, validity_years, first_visit_date, followup_date, mou_draft_date, coe_status, coe_name, internships_ay, placements_ay, joint_research, sponsored_funding_inr, aligned_branches, faculty_spoc, insta_url, linkedin_url, drive_link, chairman_visit, stage_index, usecases_received) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const updateMou = db.prepare(`UPDATE mous SET status = ?, progress_percent = ?, purpose = ?, mou_date = ?, validity_years = ?, first_visit_date = ?, followup_date = ?, mou_draft_date = ?, coe_status = ?, coe_name = ?, internships_ay = ?, placements_ay = ?, joint_research = ?, sponsored_funding_inr = ?, aligned_branches = ?, faculty_spoc = ?, insta_url = ?, linkedin_url = ?, drive_link = ?, chairman_visit = ?, stage_index = ?, usecases_received = ? WHERE id = ?`);
 
   let totalProcessed = 0;
 
@@ -277,6 +277,10 @@ function processExcelWorkbook(workbook) {
         const rawChairman = getField(row, 'Visited by Chairman?', 'Visited by Chairman ?', 'Visited by Chairman', 'Chairman Visit', 'Visited by Chairperson', 'Chairman_Visit', 'Visited_by_Chairman');
         const isChairman = /^(y|yes|true|1)$/i.test(String(rawChairman).trim()) ? 1 : 0;
 
+        // Extract Usecases Received Column (Column AB)
+        const rawUsecases = getField(row, 'Usecases Received', 'Usecases Received ', 'Usecases_Received', 'Usecases', 'Use Cases Received', 'Use cases received');
+        const isUsecases = /^(y|yes|true|1)$/i.test(String(rawUsecases).trim()) ? 1 : 0;
+
         let mouId;
         const existMou = getMou.get(indId, deptId);
         if (existMou) {
@@ -285,9 +289,9 @@ function processExcelWorkbook(workbook) {
           const finalLinkedin = linkedinUrl || existMou.linkedin_url || null;
           const finalDrive = driveLink || existMou.drive_link || null;
           const finalChairman = isChairman;
-          updateMou.run(finalSt, pct, activitiesLog, msDate, valYears, fvDate, fuDate, mdDate, coeStat, coeName, intAy, plcAy, jtRes, spFund, alignedDepts, facSpoc, finalInsta, finalLinkedin, finalDrive, finalChairman, finalStageIdx, existMou.id);
+          updateMou.run(finalSt, pct, activitiesLog, msDate, valYears, fvDate, fuDate, mdDate, coeStat, coeName, intAy, plcAy, jtRes, spFund, alignedDepts, facSpoc, finalInsta, finalLinkedin, finalDrive, finalChairman, finalStageIdx, isUsecases, existMou.id);
         } else {
-          const insertRes = insertMou.run(indId, deptId, `${compName} MoU`, finalSt, pct, activitiesLog, msDate, valYears, fvDate, fuDate, mdDate, coeStat, coeName, intAy, plcAy, jtRes, spFund, alignedDepts, facSpoc, instaUrl, linkedinUrl, driveLink, isChairman, finalStageIdx);
+          const insertRes = insertMou.run(indId, deptId, `${compName} MoU`, finalSt, pct, activitiesLog, msDate, valYears, fvDate, fuDate, mdDate, coeStat, coeName, intAy, plcAy, jtRes, spFund, alignedDepts, facSpoc, instaUrl, linkedinUrl, driveLink, isChairman, finalStageIdx, isUsecases);
           mouId = insertRes.lastInsertRowid;
         }
         processedMouIds.add(mouId);

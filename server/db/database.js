@@ -80,6 +80,7 @@ try {
   if (!cols.includes('coe_photos')) db.exec("ALTER TABLE mous ADD COLUMN coe_photos TEXT");
   if (!cols.includes('chairman_visit')) db.exec("ALTER TABLE mous ADD COLUMN chairman_visit INTEGER DEFAULT 0");
   if (!cols.includes('stage_index')) db.exec("ALTER TABLE mous ADD COLUMN stage_index INTEGER DEFAULT NULL");
+  if (!cols.includes('usecases_received')) db.exec("ALTER TABLE mous ADD COLUMN usecases_received INTEGER DEFAULT 0");
 } catch (e) {
   console.warn('[DB Migration Notice]', e.message);
 }

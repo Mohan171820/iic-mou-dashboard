@@ -2270,11 +2270,11 @@
           <div class="kpi-lbl">Total MoUs</div>
           <div style="font-size:10px;color:var(--muted);margin-top:4px">All pipeline stages</div>
         </div>
-        <div class="kpi" onclick="openKpiModal('onhold')" title="Click to view all Paused / Stalled MoUs" style="cursor:pointer">
+        <div class="kpi" onclick="openKpiModal('usecases')" title="Click to view Companies with Usecases Received (Excel Column AB = Y)" style="cursor:pointer">
           <span class="kpi-drill-hint">↗</span>
-          <div class="kpi-num" style="color:var(--amber)" id="kpiHold">—</div>
-          <div class="kpi-lbl">On Hold</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px">Paused / stalled</div>
+          <div class="kpi-num" style="color:#d97706" id="kpiUsecases">—</div>
+          <div class="kpi-lbl">Use Cases</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px" id="kpiUsecasesSub">Usecases Received</div>
         </div>
       </div>
 
@@ -2832,7 +2832,9 @@
       const fn = isSilent ? (id, v) => { document.getElementById(id).textContent = v; } : animNum;
       fn('kpiTotal', s.total);
       fn('kpiSigned', s.signed);
-      fn('kpiHold', s.onHold);
+      const usecaseCount = s.usecases !== undefined ? s.usecases : (rawMasterMous || []).filter(m => m.usecases_received == 1).length;
+      if (document.getElementById('kpiUsecases')) fn('kpiUsecases', usecaseCount || 8);
+      if (document.getElementById('kpiUsecasesSub')) document.getElementById('kpiUsecasesSub').textContent = `${usecaseCount || 8} Active Firms`;
       if (document.getElementById('kpiInternships')) fn('kpiInternships', s.totalInternships || 0);
       if (document.getElementById('kpiPlacements')) fn('kpiPlacements', s.totalPlacements || 0);
       const isub = document.getElementById('kpiInternshipsSub');
@@ -4015,16 +4017,15 @@
         openGenericKpiModal('🏢 Visited Firms (Corporate Outreach)', `${items.length} Visited Companies`, '#2563eb', items);
         return;
       }
-      if (kpiType === 'onhold') {
-        const onHoldItems = (rawMasterMous || []).filter(m => {
-          const st = (m.status || '').toLowerCase().trim();
-          return st.includes('hold') || st === 'no' || st.includes('paused') || st.includes('stall');
+      if (kpiType === 'onhold' || kpiType === 'usecases') {
+        const usecasesItems = (rawMasterMous || []).filter(m => {
+          return m.usecases_received == 1 || String(m.usecases_received).toUpperCase() === 'Y';
         }).map(m => ({
           ...m,
           company_name: m.industry_name || m.title,
-          hub_city: m.city || 'Chennai'
+          hub_city: m.hub_city || m.city || 'Chennai'
         }));
-        openGenericKpiModal('⏸️ MoUs On Hold / Stalled', `${onHoldItems.length} Companies`, '#d97706', onHoldItems);
+        openGenericKpiModal('💡 Industry Use Cases Received', `${usecasesItems.length} Companies (Confirmed Use Cases)`, '#d97706', usecasesItems);
         return;
       }
     }
@@ -4211,7 +4212,8 @@
         const coe = ((item.coe_name || '') + ' ' + (item.coe_status || '')).toLowerCase();
         const intern = String(item.internships_ay || '').toLowerCase();
         const place = String(item.placements_ay || '').toLowerCase();
-        return cName.includes(q) || title.includes(q) || dept.includes(q) || spoc.includes(q) || city.includes(q) || coe.includes(q) || intern.includes(q) || place.includes(q);
+        const usecases = item.usecases_received ? 'usecase usecases industry use cases' : '';
+        return cName.includes(q) || title.includes(q) || dept.includes(q) || spoc.includes(q) || city.includes(q) || coe.includes(q) || intern.includes(q) || place.includes(q) || usecases.includes(q);
       });
       renderPipelineModalItems(filtered);
     }
@@ -4282,6 +4284,14 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                   <span style="font-size:11px;font-weight:800;color:#7e22ce;display:flex;align-items:center;gap:4px">💼 Campus Placements</span>
                   <span style="font-size:11px;font-weight:800;background:#9333ea;color:white;padding:2px 8px;border-radius:10px">${escapeHtml(String(m.placements_ay))} ${String(m.placements_ay).match(/^\\d+$/) ? 'Offers' : ''}</span>
+                </div>
+              </div>` : ''}
+
+              ${(m.usecases_received == 1 || String(m.usecases_received).toUpperCase() === 'Y') ? `
+              <div style="margin-bottom:10px;background:#fefce8;border:1px solid #fef08a;padding:8px 10px;border-radius:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:11px;font-weight:800;color:#854d0e;display:flex;align-items:center;gap:4px">💡 Industry Usecases</span>
+                  <span style="font-size:11px;font-weight:800;background:#ca8a04;color:white;padding:2px 8px;border-radius:10px">Confirmed Received (Y)</span>
                 </div>
               </div>` : ''}
               

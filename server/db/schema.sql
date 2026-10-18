@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS mous (
   next_activity_date DATE,
   health TEXT DEFAULT 'Good', -- Good, At Risk, Delayed
   is_deleted INTEGER DEFAULT 0,
+  usecases_received INTEGER DEFAULT 0,
   last_status_change_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   created_by INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

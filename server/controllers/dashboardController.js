@@ -91,6 +91,11 @@ exports.getSummary = (req, res) => {
       }
     });
 
+    const totalUsecases = db.prepare(`
+      SELECT COUNT(*) as count FROM mous 
+      WHERE is_deleted = 0 AND usecases_received = 1 ${deptFilter}
+    `).get(...params).count;
+
     res.json({
       success: true,
       summary: {
@@ -105,7 +110,8 @@ exports.getSummary = (req, res) => {
         totalInternships,
         internshipCompanies,
         totalPlacements,
-        placementCompanies
+        placementCompanies,
+        usecases: totalUsecases
       }
     });
   } catch (err) {
@@ -365,7 +371,7 @@ exports.getPipelineFunnel = (req, res) => {
       CASE WHEN UPPER(TRIM(d.name)) = 'IT' THEN 'Information Technology' ELSE d.name END as department_name,
       m.faculty_spoc, m.status, m.progress_percent, m.insta_url, m.linkedin_url, m.drive_link, m.chairman_visit,
       COALESCE(i.address, 'Chennai') as hub_city, m.coe_name, m.coe_status, m.mou_date,
-      m.internships_ay, m.placements_ay, m.purpose
+      m.internships_ay, m.placements_ay, m.purpose, m.usecases_received
     `;
 
     const visitedOnlyList = db.prepare(`
