@@ -617,7 +617,7 @@ function normalizeMouStage(rawStage) {
     return { status: 'Initiated legal', pct: 65 };
   }
   if (lower.includes('company accepted') || lower.includes('draft shared')) {
-    return { status: 'Company accepted for MoU', pct: 60 };
+    return { status: 'Waiting for Chairman Sir to confirm the date', pct: 60 };
   }
   if (lower.includes('under process') || lower.includes('under progress') || lower.includes('draft mou')) {
     return { status: 'Under Process', pct: 40 };

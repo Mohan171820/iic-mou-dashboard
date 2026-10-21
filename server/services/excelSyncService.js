@@ -85,7 +85,7 @@ function normalizeMouStage(rawStage, rawStageIdx) {
   if (!isNaN(parsedNum) && parsedNum >= 1 && parsedNum <= 6) {
     if (parsedNum === 1) return { status: 'Campus Visit', pct: 20, stageIndex: 1 };
     if (parsedNum === 2) return { status: 'Follow-up Communication', pct: 40, stageIndex: 2 };
-    if (parsedNum === 3) return { status: 'MoU Draft Share', pct: 60, stageIndex: 3 };
+    if (parsedNum === 3) return { status: 'Waiting for Chairman Sir to confirm the date', pct: 60, stageIndex: 3 };
     if (parsedNum === 4) return { status: 'Formal Signing', pct: 100, stageIndex: 4 };
     if (parsedNum === 5) return { status: 'CoE Established', pct: 100, stageIndex: 5 };
     if (parsedNum === 6) return { status: 'Active R&D / Hiring', pct: 100, stageIndex: 6 };
@@ -100,8 +100,8 @@ function normalizeMouStage(rawStage, rawStageIdx) {
   if (lower.startsWith('2.') || lower.includes('follow up') || lower.includes('follow-up') || lower.includes('communicat')) {
     return { status: 'Follow-up Communication', pct: 40, stageIndex: 2 };
   }
-  if (lower.startsWith('3.') || lower.includes('draft share') || lower.includes('draft shared') || lower.includes('mou draft')) {
-    return { status: 'MoU Draft Share', pct: 60, stageIndex: 3 };
+  if (lower.startsWith('3.') || lower.includes('draft share') || lower.includes('draft shared') || lower.includes('mou draft') || lower.includes('chairman') || lower.includes('waiting')) {
+    return { status: 'Waiting for Chairman Sir to confirm the date', pct: 60, stageIndex: 3 };
   }
   if (lower.startsWith('4.') || lower.includes('formal signing')) {
     return { status: 'Formal Signing', pct: 100, stageIndex: 4 };
@@ -135,7 +135,7 @@ function normalizeMouStage(rawStage, rawStageIdx) {
     return { status: 'Initiated legal', pct: 65, stageIndex: 3 };
   }
   if (lower.includes('company accepted') || lower.includes('draft shared')) {
-    return { status: 'Company accepted for MoU', pct: 60, stageIndex: 3 };
+    return { status: 'Waiting for Chairman Sir to confirm the date', pct: 60, stageIndex: 3 };
   }
   if (lower.includes('under process') || lower.includes('under progress') || lower.includes('draft mou')) {
     return { status: 'Under Process', pct: 40, stageIndex: 3 };

@@ -83,7 +83,7 @@ exports.exportMouStatusExcel = async (req, res) => {
     const STAGE_NAMES = {
       1: '1. Campus Visit',
       2: '2. Follow-up Communication',
-      3: '3. MoU Draft Share',
+      3: '3. Waiting for Chairman Sir to confirm the date',
       4: '4. Formal Signing',
       5: '5. CoE Established',
       6: '6. Active R&D / Hiring',

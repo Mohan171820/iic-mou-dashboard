@@ -2846,7 +2846,7 @@
     const STAGE_META = {
       1: { name: 'Campus Visit', icon: '1️⃣', num: 1 },
       2: { name: 'Follow-up Communication', icon: '2️⃣', num: 2 },
-      3: { name: 'MoU Draft Share', icon: '3️⃣', num: 3 },
+      3: { name: "Waiting for Chairman Sir to confirm the date", icon: '3️⃣', num: 3 },
       4: { name: 'Formal Signing', icon: '4️⃣', num: 4 },
       5: { name: 'CoE Established', icon: '5️⃣', num: 5 },
       6: { name: 'Active R&D / Hiring', icon: '6️⃣', num: 6 },
@@ -2863,7 +2863,7 @@
       if (isUpcomingMou(m)) return 3;
       if (st === '1' || st.includes('campus visit')) return 1;
       if (st === '2' || st.includes('follow') || st.includes('communicat')) return 2;
-      if (st === '3' || st.includes('draft')) return 3;
+      if (st === '3' || st.includes('draft') || st.includes('chairman') || st.includes('waiting')) return 3;
       if (st === '4' || st === 'formal signing') return 4;
       if (st === '5') return 5;
       if (st === '6') return 6;
@@ -2877,7 +2877,7 @@
       if (isCoE && hasOutcomes) return 6;
       if (isCoE) return 5;
       if (st.startsWith('signed') || st.includes('signed') || (m.mou_date && m.mou_date.trim() !== '' && !/^(na|nil|none|-|\/|null|undefined|pending)$/i.test(m.mou_date.trim()))) return 4;
-      if (st.includes('draft') || st.includes('waiting') || st.includes('approval') || st.includes('legal') || st.includes('process') || st.includes('accepted')) return 3;
+      if (st.includes('draft') || st.includes('waiting') || st.includes('approval') || st.includes('legal') || st.includes('process') || st.includes('accepted') || st.includes('chairman')) return 3;
       if (st.includes('discussion') || st.includes('discuss') || st.includes('follow')) return 2;
       if (st.includes('visit') || st.includes('initial') || st.includes('prospect')) return 1;
       if (st.includes('hold') || st.includes('paused') || st.includes('stalled')) return 0;
@@ -3244,7 +3244,7 @@
             </div>
             <div class="company-sector">🏢 ${escapeHtml(c.city)} &nbsp;·&nbsp; ${escapeHtml(c.sector || 'Industry')}</div>
           </div>
-          <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};flex-shrink:0;">${c.latest_status}</span>
+          <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};flex-shrink:0;">${formatStatusDisplay(c.latest_status)}</span>
         </div>`;
       }).join('');
     }
@@ -3274,7 +3274,7 @@
             </div>
             <div class="company-sector">${escapeHtml(c.city)} · ${escapeHtml(c.sector || 'Industry')}</div>
           </div>
-          <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};flex-shrink:0;">${c.latest_status}</span>
+          <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};flex-shrink:0;">${formatStatusDisplay(c.latest_status)}</span>
         </div>`;
       }).join('');
     }
@@ -3315,11 +3315,25 @@
       renderAllCompanyList(filtered);
     }
 
+    function formatStatusDisplay(status) {
+      if (!status) return '';
+      const s = String(status).trim();
+      const lower = s.toLowerCase();
+      if (lower.includes('draft share') || lower.includes('draft shared') || lower === '3' || lower.startsWith('3.') || lower.includes('chairman') || lower.includes("chairman sir's date") || lower.includes('confirm the date')) {
+        return "Waiting for Chairman Sir to confirm the date";
+      }
+      return s;
+    }
+
     function statusColor(status) {
-      if (status === 'Signed') return { bg: 'rgba(37,161,118,0.1)', color: '#25a176', border: 'rgba(37,161,118,0.25)' };
-      if (status === 'On Hold') return { bg: 'rgba(217,119,6,0.1)', color: '#d97706', border: 'rgba(217,119,6,0.25)' };
-      if (status === 'Visited Only' || status === 'Initial Communication') return { bg: '#f1f5f9', color: '#64748b', border: '#e2e8f0' };
-      if (status === 'CoE Operational') return { bg: 'rgba(16,185,129,0.1)', color: '#10b981', border: 'rgba(16,185,129,0.25)' };
+      const s = String(status || '').trim().toLowerCase();
+      if (s === 'signed' || s.startsWith('signed') || s.startsWith('formal')) return { bg: 'rgba(37,161,118,0.1)', color: '#25a176', border: 'rgba(37,161,118,0.25)' };
+      if (s === 'on hold' || s.includes('hold')) return { bg: 'rgba(217,119,6,0.1)', color: '#d97706', border: 'rgba(217,119,6,0.25)' };
+      if (s === 'visited only' || s.includes('initial') || s.includes('campus visit')) return { bg: '#f1f5f9', color: '#64748b', border: '#e2e8f0' };
+      if (s.includes('coe')) return { bg: 'rgba(16,185,129,0.1)', color: '#10b981', border: 'rgba(16,185,129,0.25)' };
+      if (s.includes('draft share') || s.includes('draft shared') || s.includes('chairman') || s.includes('waiting')) {
+        return { bg: 'rgba(59,130,246,0.1)', color: '#2563eb', border: 'rgba(59,130,246,0.25)' };
+      }
       return { bg: 'rgba(51,173,133,0.1)', color: '#33ad85', border: 'rgba(51,173,133,0.25)' };
     }
 
@@ -3545,7 +3559,7 @@
           <td><div style="font-weight:700;color:var(--txt)">${c.name}</div></td>
           <td style="color:var(--muted)">${c.city} · ${c.sector || '—'}</td>
           <td style="color:var(--primary);font-weight:700">${c.visit_count || 1}</td>
-          <td><span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border}">${c.latest_status}</span></td>
+          <td><span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border}">${formatStatusDisplay(c.latest_status)}</span></td>
           <td style="font-weight:700;color:var(--txt)">${c.mou_count}</td>
         </tr>`;
       }).join('');
@@ -3601,7 +3615,7 @@
           </td>
           <td style="color:var(--muted)">${escapeHtml(m.city || m.hub_city || 'Chennai')} · ${escapeHtml(m.sector || 'Industry')}</td>
           <td style="color:var(--txt-body);font-weight:600">${escapeHtml(deptName)}</td>
-          <td><span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border}">${m.status || m.latest_status}</span></td>
+          <td><span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border}">${formatStatusDisplay(m.status || m.latest_status)}</span></td>
           <td>
             <div style="height:6px;background:#e2e8f0;border-radius:3px;width:80px">
               <div style="height:100%;width:${pct}%;background:${sc.color};border-radius:3px"></div>
@@ -3707,7 +3721,7 @@
       optGroup.innerHTML = `
         <option value="1">1️⃣ 1 - Campus Visit (${stageCounts[1] || 0})</option>
         <option value="2">2️⃣ 2 - Follow-up Communication (${stageCounts[2] || 0})</option>
-        <option value="3">3️⃣ 3 - MoU Draft Share (${stageCounts[3] || 0})</option>
+        <option value="3">3️⃣ 3 - Waiting for Chairman Sir to confirm the date (${stageCounts[3] || 0})</option>
         <option value="4">4️⃣ 4 - Formal Signing (${stageCounts[4] || 0})</option>
         <option value="5">5️⃣ 5 - CoE Established (${stageCounts[5] || 0})</option>
         <option value="6">6️⃣ 6 - Active R&D / Hiring (${stageCounts[6] || 0})</option>
@@ -3847,7 +3861,7 @@
           <td style="color:var(--txt-body);font-weight:600">${escapeHtml(deptName)}</td>
           <td>
             <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};white-space:nowrap;">
-              <strong style="font-size:10px;opacity:0.85;margin-right:3px;">${stagePrefix}</strong>${escapeHtml(m.status)}
+              <strong style="font-size:10px;opacity:0.85;margin-right:3px;">${stagePrefix}</strong>${escapeHtml(formatStatusDisplay(m.status))}
             </span>
           </td>
           <td>
@@ -3898,7 +3912,7 @@
         let suffix = 'All';
         if (masterStatusFilter === '1') suffix = 'Stage_1_Campus_Visit';
         else if (masterStatusFilter === '2') suffix = 'Stage_2_Followup_Communication';
-        else if (masterStatusFilter === '3') suffix = 'Stage_3_MoU_Draft_Share';
+        else if (masterStatusFilter === '3') suffix = 'Stage_3_Waiting_For_Chairman_Sir_To_Confirm_Date';
         else if (masterStatusFilter === '4') suffix = 'Stage_4_Formal_Signing';
         else if (masterStatusFilter === '5') suffix = 'Stage_5_CoE_Established';
         else if (masterStatusFilter === '6') suffix = 'Stage_6_Active_RD_Hiring';
@@ -4894,7 +4908,7 @@
           <div style="font-size:10px;color:rgba(255,255,255,0.6);font-weight:800;letter-spacing:1px;margin-bottom:4px">MOU STATUS</div>
           <div style="background:${isCoE ? '#064e3b' : (isSigned ? '#065f46' : '#1e3a8a')};border:1px solid ${isCoE ? '#10b981' : (isSigned ? '#34d399' : '#3b82f6')};color:${isCoE ? '#34d399' : (isSigned ? '#6ee7b7' : '#93c5fd')};padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px">
             <div style="width:6px;height:6px;border-radius:50%;background:currentColor"></div>
-            ${isCoE && !m.status.toLowerCase().includes('coe') ? (m.coe_status ? `CoE ${m.coe_status}` : 'CoE Established') : m.status}
+            ${isCoE && !m.status.toLowerCase().includes('coe') ? (m.coe_status ? `CoE ${m.coe_status}` : 'CoE Established') : formatStatusDisplay(m.status)}
           </div>
         </div>
       </div>
@@ -4919,9 +4933,9 @@
             <div style="font-size:10px;color:var(--muted);margin-top:2px">${m.followup_date || 'Done'}</div>
           </div>
           
-          <div style="position:relative;z-index:2;width:80px">
+          <div style="position:relative;z-index:2;width:105px">
             <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:white;display:grid;place-items:center;margin:0 auto 10px;font-weight:bold;font-size:14px">✓</div>
-            <div style="font-size:11px;font-weight:700;color:var(--txt)">3. MoU Draft Shared</div>
+            <div style="font-size:11px;font-weight:700;color:var(--txt);line-height:1.25">3. Waiting for Chairman Sir to confirm the date</div>
             <div style="font-size:10px;color:var(--muted);margin-top:2px">${m.mou_draft_date || 'Done'}</div>
           </div>
           
