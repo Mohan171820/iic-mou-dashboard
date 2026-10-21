@@ -110,9 +110,7 @@ The application will start at: `http://localhost:5000`
 
 | Role | Email | Password | Access Level |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@college.edu` | `Admin@123` | Full Control (`/admin`) |
-| **Chairperson** | `chairperson@college.edu` | `Chair@123` | Read-Only + Remarks (`/chairperson`) |
-| **Coordinator (CSE)** | `coordinator@college.edu` | `Coord@123` | CSE Dept Scope (`/admin`) |
+| **Chairperson** | `shivakumar@srmist.edu.in` | `shivakumar@321` | Executive Portal (`/chairperson`) |
 
 ---
 
