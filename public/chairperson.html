@@ -144,12 +144,12 @@
 
       .hdr-search-box {
         position: relative;
-        width: 135px;
+        width: 120px;
         flex-shrink: 0;
         transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .hdr-search-box:focus-within {
-        width: 175px;
+        width: 160px;
       }
 
       .hdr-right {
@@ -442,7 +442,7 @@
         border: 1px solid var(--bdr);
         border-radius: 9px;
         padding: 3px;
-        margin: 0 8px;
+        margin: 0 6px;
         flex-shrink: 0;
         overflow-x: auto;
         scrollbar-width: none;
@@ -455,13 +455,13 @@
       .vtab {
         display: flex;
         align-items: center;
-        gap: 5px;
-        padding: 5px 9px;
+        gap: 4px;
+        padding: 4px 8px;
         border-radius: 6px;
         border: none;
         background: none;
         color: var(--muted);
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         transition: all .18s;
@@ -2198,8 +2198,8 @@
         <span class="vtab-icon">📅</span> Upcoming <span class="upcoming-count-badge" id="upcomingTabBadge"
           style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #bfdbfe;">0</span>
       </button>
-      <button class="vtab" id="tab-analytics" onclick="switchView('analytics')" title="Master Roster & Analytics">
-        <span class="vtab-icon">📊</span> Analytics
+      <button class="vtab" id="tab-analytics" onclick="switchView('analytics')" title="Master Roster Dashboard">
+        <span class="vtab-icon">📊</span> Master Roster Dashboard
       </button>
     </div>
 
