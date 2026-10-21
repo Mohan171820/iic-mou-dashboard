@@ -67,6 +67,8 @@ exports.exportMouStatusExcel = async (req, res) => {
           whereClause += ` AND (m.stage_index IN (4, 5, 6) OR LOWER(TRIM(m.status)) IN ('signed', 'formal signing', 'coe established', 'coe operational') OR LOWER(TRIM(m.status)) LIKE 'signed%' OR LOWER(TRIM(m.status)) LIKE 'coe%')`;
         } else if (s === 'unsigned') {
           whereClause += ` AND NOT (m.stage_index IN (4, 5, 6) OR LOWER(TRIM(m.status)) IN ('signed', 'formal signing', 'coe established', 'coe operational') OR LOWER(TRIM(m.status)) LIKE 'signed%' OR LOWER(TRIM(m.status)) LIKE 'coe%')`;
+        } else if (s === 'pending-date') {
+          whereClause += ` AND (m.stage_index = 3 OR LOWER(m.status) LIKE '%confirm the date%' OR LOWER(m.status) LIKE '%chairman%' OR LOWER(m.status) LIKE '%draft%')`;
         } else if (s !== 'all') {
           whereClause += ` AND (LOWER(TRIM(m.status)) = ? OR LOWER(m.status) LIKE ?)`;
           params.push(s, `%${s}%`);
