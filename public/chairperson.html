@@ -84,28 +84,28 @@
     .hdr-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
     .hdr-brand {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       flex-shrink: 0;
       text-decoration: none;
     }
 
     .hdr-logo {
-      width: 26px;
-      height: 26px;
-      min-width: 26px;
+      width: 25px;
+      height: 25px;
+      min-width: 25px;
       background: linear-gradient(135deg, var(--primary), var(--teal-light));
       border-radius: 6px;
       display: grid;
       place-items: center;
       font-weight: 900;
-      font-size: 13px;
+      font-size: 12.5px;
       color: #fff;
       font-family: var(--font-serif);
       box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
@@ -120,7 +120,7 @@
     }
 
     .hdr-title {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--txt);
       font-family: var(--font-serif);
@@ -132,7 +132,7 @@
     }
 
     .hdr-sub {
-      font-size: 9.5px;
+      font-size: 9px;
       color: var(--muted);
       letter-spacing: 0.3px;
       font-weight: 500;
@@ -144,13 +144,13 @@
 
     .hdr-search-box {
       position: relative;
-      width: 100px;
+      width: 85px;
       flex-shrink: 0;
       transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .hdr-search-box:focus-within {
-      width: 135px;
+      width: 120px;
     }
 
     .hdr-right {
@@ -241,7 +241,7 @@
     /* MAIN LANDSCAPE GRID - SPACIOUS & DECONGESTED */
     .main-grid {
       display: grid;
-      grid-template-columns: clamp(280px, 22vw, 340px) 1fr;
+      grid-template-columns: clamp(260px, 20vw, 310px) 1fr;
       height: calc(100vh - 48px);
       margin-top: 48px;
       overflow: hidden;
@@ -438,13 +438,13 @@
     .view-tabs {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 3px;
       background: var(--bg);
       border: 1px solid var(--bdr);
       border-radius: 8px;
-      padding: 2px 3px;
-      margin: 0 4px;
-      flex-shrink: 1;
+      padding: 2.5px 5px;
+      margin: 0 6px;
+      flex: 1;
       min-width: 0;
       overflow-x: auto;
       scrollbar-width: none;
@@ -457,13 +457,13 @@
     .vtab {
       display: flex;
       align-items: center;
-      gap: 3px;
-      padding: 3px 6px;
+      gap: 4px;
+      padding: 4px 8px;
       border-radius: 5px;
       border: none;
       background: none;
       color: var(--muted);
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: all .18s;
@@ -522,22 +522,22 @@
     /* KPI ROW */
     .kpi-row {
       display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      gap: 6px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 12px;
     }
 
-    @media(max-width:1100px) {
+    @media(max-width:1050px) {
       .kpi-row {
-        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
       }
     }
 
     .kpi {
       background: var(--card);
       border: 1px solid var(--bdr);
-      border-radius: 10px;
-      padding: 8px 6px;
+      border-radius: 9px;
+      padding: 7px 5px;
       box-shadow: var(--shadow-sm);
       transition: all .2s ease;
       cursor: pointer;
@@ -2202,18 +2202,18 @@
       </button>
       <button class="vtab" id="tab-chairman" onclick="switchView('chairman')">
         <span class="vtab-icon">🏛️</span> Chairman Visits <span class="cv-count-badge"
-          style="background:#fef3c7;color:#92400e;padding:1px 4px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #fde68a;">0</span>
+          style="background:#fef3c7;color:#92400e;padding:1.5px 6px;border-radius:8px;font-size:9.5px;margin-left:4px;font-weight:700;border:1px solid #fde68a;">0</span>
       </button>
       <button class="vtab" id="tab-upcoming" onclick="switchView('upcoming')"
         title="Filter by Upcoming MoUs with future signing dates">
         <span class="vtab-icon">📅</span> Upcoming <span class="upcoming-count-badge" id="upcomingTabBadge"
-          style="background:#dbeafe;color:#1e40af;padding:1px 4px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #bfdbfe;">0</span>
+          style="background:#dbeafe;color:#1e40af;padding:1.5px 6px;border-radius:8px;font-size:9.5px;margin-left:4px;font-weight:700;border:1px solid #bfdbfe;">0</span>
       </button>
       <button class="vtab" id="tab-pending-date" onclick="switchView('pending-date')"
         title="Filter by MoUs Waiting for Chairman Sir to confirm the date">
         <span class="vtab-icon">⏳</span> Date Pending <span class="pending-date-count-badge"
           id="pendingDateTabBadge"
-          style="background:#fef3c7;color:#92400e;padding:1px 4px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #fde68a;">0</span>
+          style="background:#fef3c7;color:#92400e;padding:1.5px 6px;border-radius:8px;font-size:9.5px;margin-left:4px;font-weight:700;border:1px solid #fde68a;">0</span>
       </button>
       <button class="vtab" id="tab-analytics" onclick="switchView('analytics')" title="Master Roster Dashboard">
         <span class="vtab-icon">📊</span> Master Roster
