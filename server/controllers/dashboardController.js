@@ -1,7 +1,60 @@
 const db = require('../db/database');
+const { syncFromExcelFile, syncFromGoogleSheet, getSyncStatus, processExcelWorkbook } = require('../services/excelSyncService');
 
-exports.getSummary = (req, res) => {
+function parseMouDate(str) {
+  if (!str) return null;
+  const s = String(str).trim();
+  if (/^(na|nil|none|-|\/|null|undefined|pending|not signed|waiting.*)$/i.test(s)) return null;
+  const clean = s.replace(/\s*\(.*\)$/, '').trim();
+  
+  // DD.MM.YYYY or DD-MM-YYYY
+  let m = clean.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{2,4})$/);
+  if (m) {
+    let day = parseInt(m[1]), month = parseInt(m[2]) - 1, year = parseInt(m[3]);
+    if (year < 100) year += 2000;
+    return new Date(year, month, day);
+  }
+  
+  // M/D/YY or D/M/YY or MM/DD/YYYY
+  m = clean.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) {
+    let n1 = parseInt(m[1]), n2 = parseInt(m[2]), year = parseInt(m[3]);
+    if (year < 100) year += 2000;
+    if (n1 > 12) {
+      return new Date(year, n2 - 1, n1);
+    } else {
+      return new Date(year, n2 - 1, n1);
+    }
+  }
+  
+  const d = new Date(clean);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+let lastCloudSyncCheck = 0;
+let isAutoSyncing = false;
+
+async function ensureRealtimeSync() {
+  const now = Date.now();
+  if (now - lastCloudSyncCheck > 30000 && !isAutoSyncing) {
+    lastCloudSyncCheck = now;
+    isAutoSyncing = true;
+    try {
+      if (!process.env.VERCEL) {
+        syncFromExcelFile();
+      }
+      await syncFromGoogleSheet();
+    } catch (e) {
+      console.warn('[Realtime Sync Notice]:', e.message);
+    } finally {
+      isAutoSyncing = false;
+    }
+  }
+}
+
+exports.getSummary = async (req, res) => {
   try {
+    await ensureRealtimeSync();
     let deptFilter = '';
     const params = [];
 
@@ -96,11 +149,25 @@ exports.getSummary = (req, res) => {
       WHERE is_deleted = 0 AND usecases_received = 1 ${deptFilter}
     `).get(...params).count;
 
+    const allMousForUpcoming = db.prepare(`SELECT mou_date, status FROM mous WHERE is_deleted = 0 ${deptFilter}`).all(...params);
+    let upcomingCount = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    allMousForUpcoming.forEach(m => {
+      const d = parseMouDate(m.mou_date);
+      if (d && d > today) {
+        upcomingCount++;
+      } else if (m.status && /waiting for date|upcoming|date confirmation/i.test(m.status)) {
+        upcomingCount++;
+      }
+    });
+
     res.json({
       success: true,
       summary: {
         total,
         signed,
+        upcoming: upcomingCount,
         inProgress,
         onHold,
         notProceeding,
@@ -570,8 +637,6 @@ function normalizeMouStage(rawStage) {
 
   return { status: s, pct: 10 };
 }
-
-const { syncFromExcelFile, syncFromGoogleSheet, getSyncStatus, processExcelWorkbook } = require('../services/excelSyncService');
 
 exports.uploadExcel = (req, res) => {
   try {

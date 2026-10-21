@@ -413,10 +413,15 @@ async function syncFromGoogleSheet(customUrl) {
       const workbook = xlsx.read(buf, { type: 'buffer', cellDates: true });
       const count = processExcelWorkbook(workbook, `Google Sheets [${docId.slice(0, 8)}...]`);
       
-      // Save local backup copy
+      // Save local backup copy and update local Desktop file if present
       try {
         const backupPath = path.join(__dirname, '../../data/Google_Sheet_Synced.xlsx');
         fs.writeFileSync(backupPath, buf);
+        const desktopFile = findActiveSyncFile();
+        if (desktopFile && fs.existsSync(desktopFile) && !process.env.VERCEL) {
+          fs.writeFileSync(desktopFile, buf);
+          console.log(`[Google Sheet Sync] Also synced updated workbook to Desktop file: ${desktopFile}`);
+        }
       } catch (e) {}
 
       lastSyncTime = new Date();

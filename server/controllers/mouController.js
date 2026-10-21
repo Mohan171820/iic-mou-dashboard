@@ -18,6 +18,28 @@ function getPercentageForStatus(statusName, currentPercent = 0) {
   return 10;
 }
 
+function parseMouDate(str) {
+  if (!str) return null;
+  const s = String(str).trim();
+  if (/^(na|nil|none|-|\/|null|undefined|pending|not signed|waiting.*)$/i.test(s)) return null;
+  const clean = s.replace(/\s*\(.*\)$/, '').trim();
+  
+  let m = clean.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{2,4})$/);
+  if (m) {
+    let day = parseInt(m[1]), month = parseInt(m[2]) - 1, year = parseInt(m[3]);
+    if (year < 100) year += 2000;
+    return new Date(year, month, day);
+  }
+  m = clean.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) {
+    let n1 = parseInt(m[1]), n2 = parseInt(m[2]), year = parseInt(m[3]);
+    if (year < 100) year += 2000;
+    return n1 > 12 ? new Date(year, n2 - 1, n1) : new Date(year, n2 - 1, n1);
+  }
+  const d = new Date(clean);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 exports.getMous = (req, res) => {
   const { department_id, status, health, owner_id, search, sort = 'updated_at', order = 'DESC', includeDeleted = 'false' } = req.query;
 
@@ -58,6 +80,8 @@ exports.getMous = (req, res) => {
   if (status) {
     if (status.toLowerCase() === 'signed') {
       query += ` AND (LOWER(TRIM(m.status)) IN ('signed', 'formal signing', 'coe established', 'coe operational') OR LOWER(TRIM(m.status)) LIKE 'signed%' OR LOWER(TRIM(m.status)) LIKE 'coe%')`;
+    } else if (status.toLowerCase() === 'upcoming') {
+      // Handled post-query with date parser
     } else {
       query += ` AND LOWER(TRIM(m.status)) = ?`;
       params.push(status.trim().toLowerCase());
@@ -87,7 +111,17 @@ exports.getMous = (req, res) => {
 
   query += ` ORDER BY ${sortCol} ${sortDir}`;
 
-  const mous = db.prepare(query).all(...params);
+  let mous = db.prepare(query).all(...params);
+  if (status && status.toLowerCase() === 'upcoming') {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    mous = mous.filter(m => {
+      const d = parseMouDate(m.mou_date);
+      if (d && d > today) return true;
+      if (m.status && /waiting for date|upcoming|date confirmation/i.test(m.status)) return true;
+      return false;
+    });
+  }
   res.json({ success: true, count: mous.length, mous });
 };
 
