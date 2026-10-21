@@ -34,6 +34,17 @@ const loginLimiter = rateLimit({
 
 app.use('/api/auth/login', loginLimiter);
 
+// Disable caching for HTML files so updates are always seen immediately
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path === '/chairperson' || req.path === '/login' || req.path === '/admin' || req.path === '/portal' || req.path.endsWith('.html')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+  }
+  next();
+});
+
 // Static file serving
 app.use(express.static(path.join(__dirname, '../public')));
 // Static uploads serving (bundled uploads, public mirror, and /tmp)
