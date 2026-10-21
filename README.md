@@ -110,7 +110,7 @@ The application will start at: `http://localhost:5000`
 
 | Role | Email | Password | Access Level |
 | :--- | :--- | :--- | :--- |
-| **Chairperson** | `shivakumar@srmist.edu.in` | `shivakumar@321` | Executive Portal (`/chairperson`) |
+| **Dean / Chairperson** | `dean@srmist.edu.in` | `Dean@321` | Industry-Academia Connect (`/chairperson`) |
 
 ---
 

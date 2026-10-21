@@ -71,43 +71,44 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 28px;
+        padding: 0 14px;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 100;
         box-shadow: var(--shadow-sm);
+        box-sizing: border-box;
       }
 
       .hdr-left {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 10px;
         flex-shrink: 0;
       }
 
       .hdr-brand {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
         flex-shrink: 0;
         text-decoration: none;
       }
 
       .hdr-logo {
-        width: 34px;
-        height: 34px;
-        min-width: 34px;
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
         background: linear-gradient(135deg, var(--primary), var(--teal-light));
-        border-radius: 9px;
+        border-radius: 7px;
         display: grid;
         place-items: center;
         font-weight: 900;
-        font-size: 16px;
+        font-size: 14px;
         color: #fff;
         font-family: var(--font-serif);
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+        box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
         flex-shrink: 0;
       }
 
@@ -119,7 +120,7 @@
       }
 
       .hdr-title {
-        font-size: 16px;
+        font-size: 14.5px;
         font-weight: 700;
         color: var(--txt);
         font-family: var(--font-serif);
@@ -131,7 +132,7 @@
       }
 
       .hdr-sub {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--muted);
         letter-spacing: 0.3px;
         font-weight: 500;
@@ -141,11 +142,22 @@
         padding: 0;
       }
 
+      .hdr-search-box {
+        position: relative;
+        width: 135px;
+        flex-shrink: 0;
+        transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .hdr-search-box:focus-within {
+        width: 175px;
+      }
+
       .hdr-right {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-left: auto
+        gap: 6px;
+        margin-left: auto;
+        flex-shrink: 0;
       }
 
       .hdr-pill {
@@ -228,10 +240,10 @@
       /* MAIN LANDSCAPE GRID - SPACIOUS & DECONGESTED */
       .main-grid {
         display: grid;
-        grid-template-columns: 420px 1fr;
+        grid-template-columns: clamp(300px, 24vw, 380px) 1fr;
         height: calc(100vh - 60px);
         margin-top: 60px;
-        overflow: hidden
+        overflow: hidden;
       }
 
       /* LEFT PANEL */
@@ -241,7 +253,7 @@
         flex-direction: column;
         overflow-y: auto;
         background: var(--bg);
-        padding: 24px;
+        padding: 16px;
         scrollbar-width: thin;
         scrollbar-color: #cbd5e1 transparent
       }
@@ -406,7 +418,7 @@
       /* RIGHT PANEL - SPACIOUS & DECONGESTED */
       .rp {
         overflow-y: auto;
-        padding: 28px 36px;
+        padding: 20px 20px;
         scrollbar-width: thin;
         scrollbar-color: #cbd5e1 transparent;
         background: var(--bg)
@@ -425,13 +437,13 @@
       .view-tabs {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
         background: var(--bg);
         border: 1px solid var(--bdr);
-        border-radius: 10px;
-        padding: 4px;
-        margin-left: 12px;
-        flex-shrink: 1;
+        border-radius: 9px;
+        padding: 3px;
+        margin: 0 8px;
+        flex-shrink: 0;
         overflow-x: auto;
         scrollbar-width: none;
       }
@@ -443,18 +455,18 @@
       .vtab {
         display: flex;
         align-items: center;
-        gap: 7px;
-        padding: 6px 14px;
-        border-radius: 7px;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 6px;
         border: none;
         background: none;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 600;
         cursor: pointer;
         transition: all .18s;
         font-family: var(--font-sans);
-        white-space: nowrap
+        white-space: nowrap;
       }
 
       .vtab:hover {
@@ -503,24 +515,25 @@
       .kpi-row {
         display: grid;
         grid-template-columns: repeat(9, 1fr);
-        gap: 10px;
-        margin-bottom: 24px;
+        gap: 8px;
+        margin-bottom: 20px;
       }
-      @media(max-width:1280px) {
+      @media(max-width:1100px) {
         .kpi-row {
-          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
         }
       }
 
       .kpi {
         background: var(--card);
         border: 1px solid var(--bdr);
-        border-radius: 14px;
-        padding: 16px 14px;
+        border-radius: 12px;
+        padding: 12px 8px;
         box-shadow: var(--shadow-sm);
         transition: all .2s ease;
         cursor: pointer;
         position: relative;
+        min-width: 0;
       }
 
       .kpi:hover {
@@ -531,9 +544,9 @@
 
       .kpi-drill-hint {
         position: absolute;
-        top: 12px;
-        right: 14px;
-        font-size: 13px;
+        top: 8px;
+        right: 8px;
+        font-size: 11px;
         font-weight: 800;
         color: var(--muted);
         opacity: 0.35;
@@ -547,21 +560,24 @@
       }
 
       .kpi-num {
-        font-size: 32px;
+        font-size: 24px;
         font-weight: 800;
-        letter-spacing: -1px;
+        letter-spacing: -0.5px;
         color: var(--txt);
         font-family: var(--font-serif);
-        line-height: 1
+        line-height: 1.1;
       }
 
       .kpi-lbl {
-        font-size: 11px;
+        font-size: 10.5px;
         color: var(--muted);
         text-transform: uppercase;
-        letter-spacing: 0.6px;
-        margin-top: 8px;
-        font-weight: 700
+        letter-spacing: 0.4px;
+        margin-top: 5px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       /* DEPT GRID */
@@ -2155,46 +2171,46 @@
       </div>
 
       <!-- SEARCH -->
-      <div style="position:relative; width:220px; flex-shrink:0;">
-        <span style="position:absolute;left:12px;top:8px;font-size:12px;color:var(--muted)">🔍</span>
-        <input type="text" id="globalSearch" placeholder="Search company or city..."
+      <div class="hdr-search-box">
+        <span style="position:absolute;left:9px;top:7px;font-size:11px;color:var(--muted)">🔍</span>
+        <input type="text" id="globalSearch" placeholder="Search..."
           oninput="handleGlobalSearch(this.value)"
-          style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--bdr);border-radius:20px;background:#f8fafc;color:var(--txt);font-family:var(--font-sans);font-size:12px;outline:none;transition:border .2s">
+          style="width:100%;padding:5px 8px 5px 26px;border:1px solid var(--bdr);border-radius:16px;background:#f8fafc;color:var(--txt);font-family:var(--font-sans);font-size:11px;outline:none;transition:border .2s">
       </div>
     </div>
 
     <!-- FILTER TABS -->
     <div class="view-tabs">
       <button class="vtab active" id="tab-city" onclick="switchView('city')">
-        <span class="vtab-icon"></span> City-First
+        <span class="vtab-icon">🏙️</span> Cities
       </button>
       <button class="vtab" id="tab-company" onclick="switchView('company')">
-        <span class="vtab-icon"></span> Company-First
+        <span class="vtab-icon">🏢</span> Companies
       </button>
       <button class="vtab" id="tab-department" onclick="switchView('department')">
-        <span class="vtab-icon"></span> Department-First
+        <span class="vtab-icon">🏛️</span> Departments
       </button>
       <button class="vtab" id="tab-chairman" onclick="switchView('chairman')">
-        <span class="vtab-icon">🏛️</span> Chairman Visit <span class="cv-count-badge"
-          style="background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:10px;font-size:10px;margin-left:2px;font-weight:700;border:1px solid #fde68a;">0</span>
+        <span class="vtab-icon">🏛️</span> Chairman Visits <span class="cv-count-badge"
+          style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #fde68a;">0</span>
       </button>
       <button class="vtab" id="tab-upcoming" onclick="switchView('upcoming')" title="Filter by Upcoming MoUs with future signing dates">
-        <span class="vtab-icon">📅</span> Upcoming MoUs <span class="upcoming-count-badge" id="upcomingTabBadge"
-          style="background:#dbeafe;color:#1e40af;padding:1px 6px;border-radius:10px;font-size:10px;margin-left:2px;font-weight:700;border:1px solid #bfdbfe;">0</span>
+        <span class="vtab-icon">📅</span> Upcoming <span class="upcoming-count-badge" id="upcomingTabBadge"
+          style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:8px;font-size:9px;margin-left:2px;font-weight:700;border:1px solid #bfdbfe;">0</span>
       </button>
-      <button class="vtab" id="tab-analytics" onclick="switchView('analytics')">
-        <span class="vtab-icon">📊</span> Master Roster &amp; Analytics
+      <button class="vtab" id="tab-analytics" onclick="switchView('analytics')" title="Master Roster & Analytics">
+        <span class="vtab-icon">📊</span> Analytics
       </button>
     </div>
 
     <div class="hdr-right">
       <button onclick="downloadReport('pdf', this)" class="btn-sm-ghost" title="Download Executive PDF Report"
-        style="cursor:pointer">📄 PDF</button>
+        style="cursor:pointer;padding:4px 8px;font-size:11px;">📄 PDF</button>
       <button onclick="downloadReport('excel', this)" class="btn-sm-ghost" title="Download Excel Status Register"
-        style="cursor:pointer">📊 Excel</button>
-      <div class="avatar" id="userInitial" title="User Profile"
-        style="width:36px;height:36px;font-size:14px;cursor:pointer;margin-left:12px;">E</div>
-      <button class="btn-logout" onclick="logoutUser()">Logout</button>
+        style="cursor:pointer;padding:4px 8px;font-size:11px;">📊 Excel</button>
+      <div class="avatar" id="userInitial" title="Dean User Profile"
+        style="width:28px;height:28px;font-size:11px;cursor:pointer;">D</div>
+      <button class="btn-logout" onclick="logoutUser()" style="padding:4px 10px;font-size:11px;">Logout</button>
     </div>
   </header>
 
@@ -2349,8 +2365,8 @@
           title="Click to view all Upcoming MoUs scheduled with future signing dates" style="cursor:pointer">
           <span class="kpi-drill-hint">↗</span>
           <div class="kpi-num" style="color:#2563eb" id="kpiUpcoming">—</div>
-          <div class="kpi-lbl">Upcoming MoUs</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px" id="kpiUpcomingSub">— Scheduled</div>
+          <div class="kpi-lbl">Upcoming</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px" id="kpiUpcomingSub">Scheduled</div>
         </div>
       </div>
 

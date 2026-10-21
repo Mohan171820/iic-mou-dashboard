@@ -45,7 +45,7 @@ async function seedDatabase() {
 
   // 3. Seed Users
   const passwordHash = await bcrypt.hash('Admin@123', 10);
-  const chairHash = await bcrypt.hash('shivakumar@321', 10);
+  const chairHash = await bcrypt.hash('Dean@321', 10);
   const coordHash = await bcrypt.hash('Coord@123', 10);
 
   const insertUser = db.prepare(`
@@ -54,7 +54,7 @@ async function seedDatabase() {
   `);
 
   insertUser.run(1, 'System Administrator', 'admin@college.edu', passwordHash, 'Admin', null, 0);
-  insertUser.run(2, 'DR. R. ShivaKumar', 'shivakumar@srmist.edu.in', chairHash, 'Chairperson', null, 1);
+  insertUser.run(2, 'Dean', 'dean@srmist.edu.in', chairHash, 'Chairperson', null, 1);
   insertUser.run(3, 'Prof. N. K. Patel (CSE Coordinator)', 'coordinator@college.edu', coordHash, 'Coordinator', 1, 0);
 
   // 4. Seed Industries

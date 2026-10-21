@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    if (normalizedEmail !== 'shivakumar@srmist.edu.in') {
+    if (normalizedEmail !== 'dean@srmist.edu.in') {
       return res.status(401).json({ success: false, message: 'Invalid credentials. Access restricted to authorized personnel.' });
     }
 
