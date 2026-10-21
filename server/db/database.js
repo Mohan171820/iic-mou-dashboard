@@ -55,18 +55,18 @@ if (schemaPath) {
   }
 }
 
-// Ensure default users exist if users table is empty
+// Ensure Chairperson (DR. R. ShivaKumar) credentials exist and are active
 try {
-  const userCheck = db.prepare('SELECT count(*) as count FROM users').get();
-  if (!userCheck || userCheck.count === 0) {
-    const bcrypt = require('bcryptjs');
-    const adminHash = bcrypt.hashSync('Admin@123', 10);
-    const chairHash = bcrypt.hashSync('Chair@123', 10);
-    const insertUser = db.prepare(`INSERT OR REPLACE INTO users (id, name, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?, 1)`);
-    insertUser.run(1, 'System Administrator', 'admin@college.edu', adminHash, 'Admin');
-    insertUser.run(2, 'DR. R. ShivaKumar', 'chairperson@college.edu', chairHash, 'Chairperson');
-    console.log('[DB Setup] Seeded default Chairperson and Admin credentials.');
+  const bcrypt = require('bcryptjs');
+  const chairHash = bcrypt.hashSync('shivakumar@321', 10);
+  const existingShiva = db.prepare('SELECT id FROM users WHERE email = ?').get('shivakumar@srmist.edu.in');
+  if (!existingShiva) {
+    db.prepare(`INSERT OR REPLACE INTO users (id, name, email, password_hash, role, is_active) VALUES (2, 'DR. R. ShivaKumar', 'shivakumar@srmist.edu.in', ?, 'Chairperson', 1)`).run(chairHash);
+  } else {
+    db.prepare(`UPDATE users SET name = 'DR. R. ShivaKumar', password_hash = ?, role = 'Chairperson', is_active = 1 WHERE email = 'shivakumar@srmist.edu.in'`).run(chairHash);
   }
+  // Deactivate any other users so only shivakumar@srmist.edu.in is accessible
+  db.prepare(`UPDATE users SET is_active = 0 WHERE email != 'shivakumar@srmist.edu.in'`).run();
 } catch (e) {
   console.warn('[DB Setup] User verification notice:', e.message);
 }

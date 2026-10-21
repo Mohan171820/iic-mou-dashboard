@@ -12,7 +12,12 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email.trim().toLowerCase());
+    const normalizedEmail = email.trim().toLowerCase();
+    if (normalizedEmail !== 'shivakumar@srmist.edu.in') {
+      return res.status(401).json({ success: false, message: 'Invalid credentials. Access restricted to authorized personnel.' });
+    }
+
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(normalizedEmail);
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid credentials.' });
     }

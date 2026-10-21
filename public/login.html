@@ -296,99 +296,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Minimalist Quick Access Section */
-    .quick-access-sec {
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid #f1f5f9;
-    }
-    .qa-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .qa-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--txt-sub);
-    }
-    .qa-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #10b981;
-    }
-    .qa-status-dot {
-      width: 6px;
-      height: 6px;
-      background: #10b981;
-      border-radius: 50%;
-    }
-
-    .qa-card {
-      background: #f8fafc;
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .qa-card:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-      transform: translateY(-0.5px);
-    }
-    .qa-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .qa-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--txt-title);
-    }
-    .qa-name {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--txt-title);
-      letter-spacing: -0.01em;
-    }
-    .qa-role {
-      font-size: 11px;
-      color: var(--txt-muted);
-    }
-    .qa-btn-pill {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--txt-title);
-      background: #ffffff;
-      border: 1px solid var(--card-border);
-      padding: 5px 10px;
-      border-radius: 6px;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .qa-card:hover .qa-btn-pill {
-      border-color: #94a3b8;
-    }
-
     /* Footer */
     .portal-footer {
       margin-top: 24px;
@@ -448,7 +355,7 @@
       </div>
 
       <!-- Sign In Form -->
-      <form id="loginForm">
+      <form id="loginForm" autocomplete="off">
         <div class="form-group">
           <label class="form-label" for="email">Email address</label>
           <div class="input-wrapper">
@@ -463,8 +370,8 @@
               id="email" 
               class="form-input" 
               required 
-              placeholder="name@college.edu" 
-              autocomplete="email"
+              placeholder="Enter your official email" 
+              autocomplete="off"
             />
           </div>
         </div>
@@ -483,8 +390,8 @@
               id="password" 
               class="form-input" 
               required 
-              placeholder="••••••••" 
-              autocomplete="current-password"
+              placeholder="Enter your password" 
+              autocomplete="new-password"
             />
             <button type="button" class="toggle-pwd" id="togglePwd" title="Show or hide password">
               <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -514,37 +421,6 @@
         </button>
       </form>
 
-      <!-- Exclusive Chairperson Quick Access -->
-      <div class="quick-access-sec">
-        <div class="qa-header">
-          <span class="qa-label">Quick Executive Access</span>
-          <span class="qa-status">
-            <span class="qa-status-dot"></span>
-            Verified
-          </span>
-        </div>
-        <div class="qa-card" onclick="fillChairpersonLogin()" title="1-Click Fill Chairperson Credentials">
-          <div class="qa-left">
-            <div class="qa-avatar">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-            </div>
-            <div>
-              <div class="qa-name">DR. R. ShivaKumar</div>
-              <div class="qa-role">Chairman &amp; Executive Director</div>
-            </div>
-          </div>
-          <div class="qa-btn-pill">
-            Auto Fill
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- Institutional Footer -->
@@ -567,23 +443,6 @@
       eyeIcon.innerHTML = isPwd 
         ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
         : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-    });
-
-    // 1-Click Fill for Chairperson
-    function fillChairpersonLogin() {
-      document.getElementById('email').value = 'chairperson@college.edu';
-      document.getElementById('password').value = 'Chair@123';
-      document.getElementById('password').type = 'password';
-      eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-      document.getElementById('loginError').style.display = 'none';
-      
-      const btn = document.getElementById('btnSubmit');
-      btn.focus();
-    }
-
-    // Auto-fill on initial load for maximum convenience
-    document.addEventListener('DOMContentLoaded', () => {
-      fillChairpersonLogin();
     });
 
     // Handle Login
