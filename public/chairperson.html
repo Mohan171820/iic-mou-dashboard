@@ -4526,6 +4526,8 @@
         const cvBadge = m.chairman_visit == 1
           ? `<span style="font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;border:1px solid #fde68a;display:inline-flex;align-items:center;gap:3px;">🏛️ Chairman Visit</span>`
           : '';
+        const isUp = isUpcomingMou(m);
+        const hasDate = m.mou_date && String(m.mou_date).trim() !== '' && !/^(na|nil|none|-|\/|null|undefined)$/i.test(String(m.mou_date).trim());
         const hasCoE = m.coe_name || (m.coe_status && !/^(na|nil|none|-|\/)$/i.test(m.coe_status.trim()));
         const hasIntern = m.internships_ay && m.internships_ay != 0 && m.internships_ay != '0' && m.internships_ay != 'Nil' && m.internships_ay != 'NA' && m.internships_ay != '-';
         const hasPlace = m.placements_ay && m.placements_ay != 0 && m.placements_ay != '0' && m.placements_ay != 'Nil' && m.placements_ay != 'NA' && m.placements_ay != '-';
@@ -4546,6 +4548,16 @@
               <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.3">
                 ${escapeHtml(m.title)}
               </div>
+
+              ${isUp ? `
+              <div style="margin-bottom:10px;background:#eff6ff;border:1px solid #bfdbfe;padding:8px 10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:11px;font-weight:800;color:#1e40af;display:flex;align-items:center;gap:5px;">
+                  📅 Scheduled Signing Date
+                </span>
+                <span style="font-size:12px;font-weight:800;background:#2563eb;color:white;padding:2px 8px;border-radius:6px;">
+                  ${escapeHtml(m.mou_date || 'Upcoming')}
+                </span>
+              </div>` : ''}
 
               ${hasCoE ? `
               <div style="margin-bottom:10px;background:#ecfdf5;border:1px solid #a7f3d0;padding:8px 10px;border-radius:8px;">
@@ -4584,13 +4596,20 @@
               
               <div style="font-size:12px;display:flex;flex-direction:column;gap:5px;margin-bottom:14px;background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #f1f5f9;">
                 <div style="display:flex;align-items:center;gap:6px">
-                  <span style="color:var(--muted);width:70px;flex-shrink:0;font-size:11px">Dept:</span>
+                  <span style="color:var(--muted);width:85px;flex-shrink:0;font-size:11px">Dept:</span>
                   <span style="font-weight:700;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${deptName}">${deptName}</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px">
-                  <span style="color:var(--muted);width:70px;flex-shrink:0;font-size:11px">Status:</span>
+                  <span style="color:var(--muted);width:85px;flex-shrink:0;font-size:11px">Status:</span>
                   <span class="status-pill" style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};font-size:10px;padding:2px 8px;">${m.status}</span>
                 </div>
+                ${hasDate ? `
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="color:var(--muted);width:85px;flex-shrink:0;font-size:11px">Signing Date:</span>
+                  <span style="font-weight:800;color:${isUp ? '#1e40af' : 'var(--txt)'};font-size:11px;display:inline-flex;align-items:center;gap:4px;${isUp ? 'background:#dbeafe;padding:1px 7px;border-radius:5px;border:1px solid #bfdbfe;' : ''}">
+                    📅 ${escapeHtml(m.mou_date)}
+                  </span>
+                </div>` : ''}
               </div>
             </div>
 
