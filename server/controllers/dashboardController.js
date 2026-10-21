@@ -509,7 +509,7 @@ exports.getPipelineFunnel = (req, res) => {
       funnel: [
         { label: 'Visited Only', stageKey: 'visited', count: visitedOnlyList.length, color: '#94a3b8', items: visitedOnlyList },
         { label: 'Follow-up Communication', stageKey: 'followup', count: followUpList.length, color: '#38bdf8', items: followUpList },
-        { label: 'Draft Dispatched', stageKey: 'draft', count: draftDispatchedList.length, color: '#818cf8', items: draftDispatchedList },
+        { label: 'Waiting for Chairman Sir to confirm the date', stageKey: 'draft', count: draftDispatchedList.length, color: '#818cf8', items: draftDispatchedList },
         { label: 'MoU Signed', stageKey: 'signed', count: mouSignedList.length, color: '#10b981', items: mouSignedList },
         { label: 'CoE Operational', stageKey: 'coe', count: coeList.length, color: '#059669', items: coeList }
       ]
