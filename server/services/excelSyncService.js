@@ -259,7 +259,7 @@ function processExcelWorkbook(workbook) {
         const plcAy = parseInt(getField(row, 'Placements_AY', 'Placements AY', 'Placements')) || 0;
         const jtRes = getField(row, 'Joint_Research_Papers', 'Joint_Research_', 'Joint Research', 'Joint_Research') || null;
         const spFund = parseFloat(getField(row, 'Sponsored_Funding_INR', 'Sponsored Funding INR', 'Sponsored Funding')) || 0;
-        const activitiesLog = getField(row, 'Yearly_Activities_Log', 'Yearly Activities Log', 'Purpose', 'Activities') || '';
+        const activitiesLog = getField(row, 'Yearly_Outcomes_Activity_Ledger', 'Yearly Outcomes & Activity Ledger', 'Yearly Outcomes and Activity Ledger', 'Yearly_Activities_Log', 'Yearly Activities Log', 'Yearly Outcomes', 'Activity Ledger', 'Purpose', 'Activities') || '';
 
         // If stage is 5 or 6 or CoE details are present
         const hasCoE = (finalStageIdx === 5 || finalStageIdx === 6 || st === 'CoE Established' || st === 'CoE Operational' ||

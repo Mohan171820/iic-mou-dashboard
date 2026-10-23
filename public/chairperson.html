@@ -2608,6 +2608,7 @@
                     <option value="signed">✍️ Signed MoUs</option>
                     <option value="upcoming">📅 Upcoming MoUs (Future Dates)</option>
                     <option value="pending-date">⏳ Date Confirmation Pending</option>
+                    <option value="no-activity">⚠️ No Activity in Past 6 Months</option>
                     <option value="unsigned">⏳ Unsigned / Pipeline</option>
                   </optgroup>
                   <optgroup label="── PIPELINE STAGES (EXCEL 1 to 6) ──" id="masterStatusOptGroup">
@@ -2632,6 +2633,13 @@
               <button id="masterPendingDateFilterBtn" class="btn-sm-ghost" onclick="toggleMasterPendingDateFilter()"
                 style="cursor:pointer;font-weight:700;font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid #cbd5e1;background:white;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;">
                 ⏳ Date Confirmation Pending (<span id="masterPendingDateCount">0</span>)
+              </button>
+
+              <!-- No Activity in Past 6 Months Filter Button -->
+              <button id="masterNoActivityFilterBtn" class="btn-sm-ghost" onclick="toggleMasterNoActivityFilter()"
+                style="cursor:pointer;font-weight:700;font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid #cbd5e1;background:white;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"
+                title="Filter MoUs with no activity recorded for 6 months or more">
+                ⚠️ No Activity in 6 Mos (<span id="masterNoActivityCount">0</span>)
               </button>
 
               <!-- Export Filtered Excel Button -->
@@ -2815,6 +2823,7 @@
     let masterChairmanOnly = false;
     let masterUpcomingOnly = false;
     let masterPendingDateOnly = false;
+    let masterNoActivityOnly = false;
     let masterStatusFilter = 'all';
     let masterSearchQuery = '';
 
@@ -2838,6 +2847,71 @@
       }
       const d = new Date(clean);
       return isNaN(d.getTime()) ? null : d;
+    }
+
+    function extractDatesFromText(text) {
+      if (!text || typeof text !== 'string') return [];
+      const dates = [];
+      // Pattern 1: DD.MM.YYYY, DD-MM-YYYY, DD/MM/YYYY
+      const p1 = /(?:^|[^\d])(\d{1,2})[./\s-]{1,2}(\d{1,2})[./\s-]{1,2}(\d{2,4})(?:[^\d]|$)/g;
+      let match;
+      while ((match = p1.exec(text)) !== null) {
+        let day = parseInt(match[1]), month = parseInt(match[2]), year = parseInt(match[3]);
+        if (year < 100) year += 2000;
+        if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 2000 && year <= 2040) {
+          const d = new Date(year, month - 1, day);
+          if (!isNaN(d.getTime())) dates.push(d);
+        }
+      }
+      // Pattern 2: YYYY-MM-DD or YYYY.MM.DD
+      const p2 = /(?:^|[^\d])(\d{4})[./\s-](\d{1,2})[./\s-](\d{1,2})(?:[^\d]|$)/g;
+      while ((match = p2.exec(text)) !== null) {
+        let year = parseInt(match[1]), month = parseInt(match[2]), day = parseInt(match[3]);
+        if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 2000 && year <= 2040) {
+          const d = new Date(year, month - 1, day);
+          if (!isNaN(d.getTime())) dates.push(d);
+        }
+      }
+      return dates;
+    }
+
+    function getMouLatestActivityDate(m) {
+      if (!m) return null;
+      const foundDates = [];
+      if (m.purpose && typeof m.purpose === 'string' && m.purpose.trim() !== '') {
+        foundDates.push(...extractDatesFromText(m.purpose));
+      }
+      if (foundDates.length === 0) {
+        ['followup_date', 'mou_draft_date', 'first_visit_date', 'mou_date'].forEach(field => {
+          if (m[field]) {
+            const d = parseMouDate(m[field]);
+            if (d) foundDates.push(d);
+          }
+        });
+      }
+      if (foundDates.length === 0) return null;
+      let maxDate = foundDates[0];
+      for (let i = 1; i < foundDates.length; i++) {
+        if (foundDates[i] > maxDate) maxDate = foundDates[i];
+      }
+      return maxDate;
+    }
+
+    function formatActivityDate(d) {
+      if (!d) return 'None';
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function hasNoActivity6Months(m) {
+      if (!m) return false;
+      const latestDate = getMouLatestActivityDate(m);
+      if (!latestDate) return true;
+      const now = new Date();
+      const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+      return latestDate < sixMonthsAgo;
     }
 
     function isUpcomingMou(m) {
@@ -2882,6 +2956,12 @@
       });
       const masterBadge = document.getElementById('masterPendingDateCount');
       if (masterBadge) masterBadge.textContent = pdCount;
+    }
+
+    function updateNoActivityCounts() {
+      const inactCount = (rawMasterMous || []).filter(m => hasNoActivity6Months(m)).length;
+      const masterBadge = document.getElementById('masterNoActivityCount');
+      if (masterBadge) masterBadge.textContent = inactCount;
     }
 
     function isMouSigned(status) {
@@ -3036,10 +3116,11 @@
       }
 
       // Switching to standard view (city, company, department, chairman, analytics):
-      // ALWAYS clear upcoming and pending-date filters so they NEVER stick!
+      // ALWAYS clear upcoming, pending-date, and no-activity filters so they NEVER stick!
       masterUpcomingOnly = false;
       masterPendingDateOnly = false;
-      if (masterStatusFilter === 'upcoming' || masterStatusFilter === 'pending-date') {
+      masterNoActivityOnly = false;
+      if (masterStatusFilter === 'upcoming' || masterStatusFilter === 'pending-date' || masterStatusFilter === 'no-activity') {
         masterStatusFilter = 'all';
         const sel = document.getElementById('masterStatusFilter');
         if (sel) sel.value = 'all';
@@ -3277,6 +3358,11 @@
 
         updateUpcomingCounts();
         updatePendingDateCounts();
+        updateNoActivityCounts();
+        if (allDepts && allDepts.length) {
+          renderDeptCards(allDepts);
+          renderDeptCards2(allDepts);
+        }
         renderMasterRoster(rawMasterMous);
         renderChairmanRoster();
         updateChairmanCounts();
@@ -3797,9 +3883,29 @@
       } else {
         masterPendingDateOnly = true;
         masterUpcomingOnly = false;
+        masterNoActivityOnly = false;
         masterStatusFilter = 'pending-date';
         const sel = document.getElementById('masterStatusFilter');
         if (sel) sel.value = 'pending-date';
+      }
+      tableState.master.page = 1;
+      renderMasterRoster();
+    }
+
+    function toggleMasterNoActivityFilter() {
+      if (masterStatusFilter === 'no-activity') {
+        masterNoActivityOnly = false;
+        masterStatusFilter = 'all';
+        const sel = document.getElementById('masterStatusFilter');
+        if (sel) sel.value = 'all';
+      } else {
+        masterNoActivityOnly = true;
+        masterUpcomingOnly = false;
+        masterPendingDateOnly = false;
+        masterChairmanOnly = false;
+        masterStatusFilter = 'no-activity';
+        const sel = document.getElementById('masterStatusFilter');
+        if (sel) sel.value = 'no-activity';
       }
       tableState.master.page = 1;
       renderMasterRoster();
@@ -3809,6 +3915,7 @@
       masterStatusFilter = val || 'all';
       masterUpcomingOnly = (masterStatusFilter === 'upcoming');
       masterPendingDateOnly = (masterStatusFilter === 'pending-date' || masterStatusFilter === '3');
+      masterNoActivityOnly = (masterStatusFilter === 'no-activity');
       tableState.master.page = 1;
       renderMasterRoster();
     }
@@ -3830,6 +3937,7 @@
       let signedCount = 0;
       let unsignedCount = 0;
       let upcomingCount = 0;
+      let noActivityCount = 0;
 
       list.forEach(m => {
         const idx = getMouStageIndex(m);
@@ -3845,6 +3953,10 @@
         if (isUpcomingMou(m)) {
           upcomingCount++;
         }
+
+        if (hasNoActivity6Months(m)) {
+          noActivityCount++;
+        }
       });
 
       const sel = document.getElementById('masterStatusFilter');
@@ -3857,6 +3969,8 @@
         if (optUpcoming) optUpcoming.textContent = `📅 Upcoming MoUs (${upcomingCount})`;
         const optPendingDate = sel.querySelector('option[value="pending-date"]');
         if (optPendingDate) optPendingDate.textContent = `⏳ Date Confirmation Pending (${stageCounts[3] || 0})`;
+        const optNoActivity = sel.querySelector('option[value="no-activity"]');
+        if (optNoActivity) optNoActivity.textContent = `⚠️ No Activity in Past 6 Months (${noActivityCount})`;
         const optUnsigned = sel.querySelector('option[value="unsigned"]');
         if (optUnsigned) optUnsigned.textContent = `⏳ Unsigned / Pipeline (${unsignedCount})`;
       }
@@ -3870,6 +3984,9 @@
       if (pdTabBadge) pdTabBadge.textContent = stageCounts[3] || 0;
       const masterPdCount = document.getElementById('masterPendingDateCount');
       if (masterPdCount) masterPdCount.textContent = stageCounts[3] || 0;
+
+      const masterNoActCount = document.getElementById('masterNoActivityCount');
+      if (masterNoActCount) masterNoActCount.textContent = noActivityCount;
 
       optGroup.innerHTML = `
         <option value="1">1️⃣ 1 - Campus Visit (${stageCounts[1] || 0})</option>
@@ -3935,9 +4052,25 @@
         }
       }
 
+      const noActBtn = document.getElementById('masterNoActivityFilterBtn');
+      if (noActBtn) {
+        const isNoActActive = masterStatusFilter === 'no-activity';
+        noActBtn.classList.toggle('active', isNoActActive);
+        if (isNoActActive) {
+          noActBtn.style.background = '#fee2e2';
+          noActBtn.style.borderColor = '#ef4444';
+          noActBtn.style.color = '#b91c1c';
+        } else {
+          noActBtn.style.background = 'white';
+          noActBtn.style.borderColor = '#cbd5e1';
+          noActBtn.style.color = 'var(--txt)';
+        }
+      }
+
       updateChairmanCounts();
       updateUpcomingCounts();
       updatePendingDateCounts();
+      updateNoActivityCounts();
 
       // Multi-layer filtering
       let displayList = rawMasterMous || [];
@@ -3952,6 +4085,8 @@
         displayList = displayList.filter(m => isUpcomingMou(m));
       } else if (masterStatusFilter === 'pending-date') {
         displayList = displayList.filter(m => isPendingDateMou(m));
+      } else if (masterStatusFilter === 'no-activity') {
+        displayList = displayList.filter(m => hasNoActivity6Months(m));
       } else if (masterStatusFilter === 'signed') {
         displayList = displayList.filter(m => getMouStageIndex(m) >= 4 || isMouSigned(m.status));
       } else if (masterStatusFilter === 'unsigned') {
@@ -4019,13 +4154,19 @@
           ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;margin-left:6px;" title="Scheduled Future MoU">📅 Upcoming: ${escapeHtml(m.mou_date || 'Scheduled')}</span>`
           : '';
 
+        const isInactive = hasNoActivity6Months(m);
+        const latestActDate = getMouLatestActivityDate(m);
+        const noActBadge = isInactive
+          ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;margin-left:6px;" title="No activity recorded in past 6 months${latestActDate ? ' (Last: ' + formatActivityDate(latestActDate) + ')' : ''}">⚠️ No Activity (6M+)</span>`
+          : '';
+
         const stageIdx = getMouStageIndex(m);
         const stagePrefix = stageIdx > 0 ? `Stage ${stageIdx}: ` : '';
 
         return `<tr onclick="openMdovDirect(${m.id})">
           <td style="color:var(--primary);font-weight:800">${rowNum}</td>
           <td>
-            <div style="font-weight:700;color:var(--txt);font-family:var(--font-serif)">${escapeHtml(m.title)}${upBadge}</div>
+            <div style="font-weight:700;color:var(--txt);font-family:var(--font-serif)">${escapeHtml(m.title)}${upBadge}${noActBadge}</div>
             ${renderSocialBadges(m)}
           </td>
           <td style="color:var(--muted)">${escapeHtml(m.industry_name || '—')}</td>
@@ -4085,6 +4226,7 @@
         else if (masterStatusFilter === '2') suffix = 'Stage_2_Followup_Communication';
         else if (masterStatusFilter === '3' || masterStatusFilter === 'pending-date') suffix = 'Stage_3_Waiting_For_Chairman_Sir_To_Confirm_Date';
         else if (masterStatusFilter === 'upcoming') suffix = 'Upcoming_MoUs';
+        else if (masterStatusFilter === 'no-activity') suffix = 'No_Activity_6_Months';
         else if (masterStatusFilter === '4') suffix = 'Stage_4_Formal_Signing';
         else if (masterStatusFilter === '5') suffix = 'Stage_5_CoE_Established';
         else if (masterStatusFilter === '6') suffix = 'Stage_6_Active_RD_Hiring';
@@ -4222,11 +4364,19 @@
       if (!dg) return;
       const validDepts = (depts || []).filter(d => (d.total_mous || 0) > 0);
       dg.innerHTML = validDepts.map(d => {
+        const deptMous = (rawMasterMous || []).filter(m => m.department_id === d.id || (m.department_name && m.department_name.trim().toLowerCase() === d.name.trim().toLowerCase()));
+        const inactCount = deptMous.filter(m => hasNoActivity6Months(m)).length;
+        const inactBadge = inactCount > 0
+          ? `<span style="font-size:10px;font-weight:700;background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:10px;border:1px solid #fecaca;display:inline-flex;align-items:center;gap:3px;" title="${inactCount} MoUs have had no activity for > 6 months">⚠️ ${inactCount} Inactive (6M+)</span>`
+          : '';
         return `
       <div class="dc" style="--dc-color:${d.color}" onclick="openDov(${d.id})">
         <div class="dc-top">
           <div>
-            <div class="dc-name">${escapeHtml(d.name)}</div>
+            <div class="dc-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span>${escapeHtml(d.name)}</span>
+              ${inactBadge}
+            </div>
           </div>
           <div class="mring">${miniRing(d.avg_percent || 0, d.color)}<div class="mring-ctr">${Math.round(d.avg_percent || 0)}%</div></div>
         </div>
@@ -4234,6 +4384,7 @@
           <span>Total <span class="sv">${d.total_mous}</span></span>
           <span>Signed <span class="sv" style="color:var(--green)">${d.signed_mous}</span></span>
           <span>Active <span class="sv" style="color:${d.color}">${d.in_progress_mous || 0}</span></span>
+          <span>Inactive <span class="sv" style="color:${inactCount > 0 ? '#b91c1c' : 'inherit'};font-weight:800">${inactCount}</span></span>
         </div>
       </div>`;
       }).join('');
@@ -4964,6 +5115,7 @@
         d.name = 'Information Technology';
       }
       activeDeptId = d.id;
+      dovInactiveFilterActive = false;
       document.getElementById('dovColorBar').style.background = d.color;
       document.getElementById('dovName').textContent = d.name;
       const spoc = d.faculty_spoc || d.hod_name;
@@ -4977,7 +5129,7 @@
       document.getElementById('dovSubtitle').textContent = 'All MoU Agreements (' + d.total_mous + ')';
       document.getElementById('dovRing').innerHTML = dovRing(d.avg_percent || 0, d.color);
       document.getElementById('dov').classList.add('open');
-      document.getElementById('dovMouList').innerHTML = '<div style="color:var(--muted);text-align:center;padding:32px">Loading MoUsâ€¦</div>';
+      document.getElementById('dovMouList').innerHTML = '<div style="color:var(--muted);text-align:center;padding:32px">Loading MoUs…</div>';
       apiRequest('/mous?department_id=' + d.id).then(data => {
         if (data && data.mous) renderDovMous(data.mous, d.color, d);
       }).catch(() => {
@@ -5012,21 +5164,68 @@
     </div>`;
     }
 
+    let dovInactiveFilterActive = false;
+    let currentDovMous = [];
+
+    function toggleDovInactiveFilter() {
+      dovInactiveFilterActive = !dovInactiveFilterActive;
+      const dept = allDepts.find(d => d.id === activeDeptId) || {};
+      renderDovMous(currentDovMous, dept.color || 'var(--primary)', dept);
+    }
+
     function renderDovMous(mous, color, dept) {
+      if (mous) currentDovMous = mous;
+      const allMousList = currentDovMous || [];
       const el = document.getElementById('dovMouList');
-      if (!mous.length) { el.innerHTML = '<div style="color:var(--muted);text-align:center;padding:32px">No MoUs found.</div>'; return; }
-      el.innerHTML = mous.map(m => {
+      if (!allMousList.length) { el.innerHTML = '<div style="color:var(--muted);text-align:center;padding:32px">No MoUs found.</div>'; return; }
+
+      const inactiveMoUs = allMousList.filter(m => hasNoActivity6Months(m));
+      const inactCount = inactiveMoUs.length;
+
+      let listToRender = dovInactiveFilterActive ? inactiveMoUs : allMousList;
+
+      let bannerHtml = '';
+      if (inactCount > 0) {
+        bannerHtml = `
+        <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">⚠️</span>
+            <div>
+              <strong style="color:#9f1239;font-size:12px;">${inactCount} Dormant / Inactive MoU(s)</strong>
+              <div style="font-size:11px;color:#be123c;">No activity recorded in Yearly Ledger for 6+ months.</div>
+            </div>
+          </div>
+          <button type="button" onclick="toggleDovInactiveFilter()" style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;background:${dovInactiveFilterActive ? '#0284c7' : '#be123c'};color:white;border:none;cursor:pointer;transition:all 0.2s;">
+            ${dovInactiveFilterActive ? 'Show All (' + allMousList.length + ')' : 'Filter Inactive (' + inactCount + ')'}
+          </button>
+        </div>`;
+      }
+
+      if (dovInactiveFilterActive && listToRender.length === 0) {
+        el.innerHTML = bannerHtml + '<div style="color:var(--muted);text-align:center;padding:24px">No inactive MoUs found in this department.</div>';
+        return;
+      }
+
+      const cardsHtml = listToRender.map(m => {
         const sc = m.status === 'Signed' ? 'var(--green)' : m.status === 'On Hold' ? 'var(--amber)' : m.status === 'Not Proceeding' ? 'var(--red)' : color;
         const bc = m.status === 'Signed' ? 'bg-green' : m.status === 'On Hold' ? 'bg-amber' : m.status === 'Not Proceeding' ? 'bg-red' : 'bg-indigo';
         const cvBadge = m.chairman_visit == 1
           ? `<span style="font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;border:1px solid #fde68a;display:inline-flex;align-items:center;gap:3px;">🏛️ Chairman Visit</span>`
           : '';
+
+        const isInactive = hasNoActivity6Months(m);
+        const latestActDate = getMouLatestActivityDate(m);
+        const actBadge = isInactive
+          ? `<span style="font-size:10px;font-weight:700;background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:10px;border:1px solid #fecaca;display:inline-flex;align-items:center;gap:3px;" title="No activity recorded in past 6 months${latestActDate ? ' (Last: ' + formatActivityDate(latestActDate) + ')' : ''}">⚠️ No Activity (6M+)</span>`
+          : `<span style="font-size:10px;font-weight:700;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;border:1px solid #bbf7d0;display:inline-flex;align-items:center;gap:3px;">✅ Active (${latestActDate ? formatActivityDate(latestActDate) : 'Current'})</span>`;
+
         return `<div class="mou-card" onclick="openMdov(${m.id})">
         <div class="mou-top">
           <div style="flex:1;padding-right:12px;">
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
               <span class="mou-title">${escapeHtml(m.title)}</span>
               ${cvBadge}
+              ${actBadge}
             </div>
             <div class="mou-ind">${escapeHtml(m.industry_name)} · ${escapeHtml(m.sector || 'Industry')}</div>
           </div>
@@ -5049,6 +5248,8 @@
         <div class="expand-hint">View commitments, meetings, CoE gallery &amp; timeline &rarr;</div>
       </div>`;
       }).join('');
+
+      el.innerHTML = bannerHtml + cardsHtml;
     }
 
     function closeDov() {
@@ -5243,14 +5444,23 @@
       </div>
 
       <!-- Activity Ledger -->
-      <div style="border:1px solid var(--bdr);border-radius:12px;padding:20px;background:white;margin-bottom:24px">
-        <div style="font-size:12px;font-weight:800;color:#8b5cf6;letter-spacing:0.5px;margin-bottom:16px;display:flex;align-items:center;gap:6px">
-          📅 YEARLY OUTCOMES & ACTIVITY LEDGER
-        </div>
-        <div style="font-family:monospace;font-size:12px;color:var(--txt-body);background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;line-height:1.6">
-          ${m.purpose ? m.purpose : 'No outcomes recorded yet.'}
-        </div>
-      </div>
+      ${(() => {
+        const isActInactive = hasNoActivity6Months(m);
+        const latestActDate = getMouLatestActivityDate(m);
+        const actStatusBadge = isActInactive
+          ? `<span style="font-size:11px;font-weight:700;background:#fee2e2;color:#b91c1c;padding:3px 10px;border-radius:12px;border:1px solid #fecaca;margin-left:auto;display:inline-flex;align-items:center;gap:4px;">⚠️ Dormant &mdash; No Activity in Past 6 Months${latestActDate ? ' (Last: ' + formatActivityDate(latestActDate) + ')' : ''}</span>`
+          : `<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:12px;border:1px solid #bbf7d0;margin-left:auto;display:inline-flex;align-items:center;gap:4px;">✅ Active &mdash; Last Activity: ${latestActDate ? formatActivityDate(latestActDate) : 'Recent'}</span>`;
+        return `
+        <div style="border:1px solid var(--bdr);border-radius:12px;padding:20px;background:white;margin-bottom:24px">
+          <div style="font-size:12px;font-weight:800;color:#8b5cf6;letter-spacing:0.5px;margin-bottom:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span>📅 YEARLY OUTCOMES &amp; ACTIVITY LEDGER</span>
+            ${actStatusBadge}
+          </div>
+          <div style="font-family:monospace;font-size:12px;color:var(--txt-body);background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;line-height:1.6">
+            ${m.purpose ? m.purpose : 'No outcomes recorded yet.'}
+          </div>
+        </div>`;
+      })()}
 
       <!-- Gallery & Media Section -->
       <div style="border:1px solid var(--bdr);border-radius:12px;padding:20px;background:white;margin-bottom:24px">
